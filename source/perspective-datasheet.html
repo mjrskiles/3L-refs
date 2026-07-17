@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perspective &amp; Composition — Working Datasheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Serif:ital,wght@1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EAEBE6;
+  --plate:#F4F5F1;
+  --ink:#14171A;
+  --graphite:#5F6469;
+  --rule:#C3C6BF;
+  --rule-soft:#DBDDD6;
+  --mars:#1B4B8F;
+  --mars-soft:#7A9AC4;
+  --con:#B23A2B;
+  --con-soft:#DDA79E;
+  --tint:#E0E5EC;
+
+  --f-disp:'IBM Plex Sans Condensed', 'Helvetica Neue', Arial, sans-serif;
+  --f-body:'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --f-mono:'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --f-claim:'IBM Plex Serif', Georgia, serif;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--f-body); font-size:15px; line-height:1.62;
+  font-feature-settings:"tnum" 1;
+}
+p{margin:0 0 .85em}
+a{color:var(--mars)}
+
+/* ---------- title block ---------- */
+.masthead{
+  border-bottom:2px solid var(--ink);
+  padding:26px 22px 0;
+  max-width:1180px; margin:0 auto;
+}
+.mast-grid{
+  display:grid; grid-template-columns:1fr auto; gap:28px; align-items:start;
+}
+.mast-title{
+  font-family:var(--f-disp); font-weight:700; text-transform:uppercase;
+  font-size:clamp(28px,5.2vw,54px); line-height:.94; letter-spacing:-.015em;
+  margin:0 0 10px;
+}
+.mast-title em{font-style:normal; color:var(--mars); display:block}
+.mast-sub{
+  font-family:var(--f-mono); font-size:12px; color:var(--graphite);
+  text-transform:uppercase; letter-spacing:.09em; margin:0 0 18px; max-width:44ch;
+  line-height:1.5;
+}
+.titleblock{
+  border:1px solid var(--ink); font-family:var(--f-mono); font-size:10.5px;
+  min-width:250px; background:var(--plate);
+}
+.titleblock div{
+  display:grid; grid-template-columns:78px 1fr; border-bottom:1px solid var(--rule);
+}
+.titleblock div:last-child{border-bottom:0}
+.titleblock dt{
+  padding:5px 8px; color:var(--graphite); text-transform:uppercase; letter-spacing:.06em;
+  border-right:1px solid var(--rule); margin:0;
+}
+.titleblock dd{padding:5px 8px; margin:0; font-weight:600}
+
+.feat{list-style:none; padding:0; margin:0 0 22px; max-width:62ch}
+.feat li{
+  font-family:var(--f-mono); font-size:11.5px; padding:5px 0 5px 20px;
+  border-top:1px solid var(--rule-soft); position:relative; color:var(--graphite);
+  line-height:1.45;
+}
+.feat li:last-child{border-bottom:1px solid var(--rule-soft)}
+.feat li::before{
+  content:"▸"; position:absolute; left:2px; color:var(--con);
+}
+.feat b{color:var(--ink); font-weight:600}
+
+/* ---------- layout ---------- */
+.shell{max-width:1180px; margin:0 auto; padding:0 22px 90px; display:grid;
+  grid-template-columns:186px 1fr; gap:44px; align-items:start}
+.toc{position:sticky; top:20px; padding-top:34px}
+.toc h4{
+  font-family:var(--f-mono); font-size:10px; text-transform:uppercase; letter-spacing:.12em;
+  color:var(--graphite); margin:0 0 10px; padding-bottom:6px; border-bottom:1px solid var(--rule);
+}
+.toc ol{list-style:none; padding:0; margin:0; counter-reset:t}
+.toc li{counter-increment:t; margin-bottom:1px}
+.toc a{
+  display:block; font-family:var(--f-mono); font-size:11.5px; text-decoration:none;
+  color:var(--graphite); padding:3px 0 3px 24px; position:relative; line-height:1.35;
+}
+.toc a::before{
+  content:counter(t,decimal-leading-zero); position:absolute; left:0; color:var(--con-soft);
+}
+.toc a:hover{color:var(--mars)}
+.toc a:focus-visible{outline:2px solid var(--mars); outline-offset:2px}
+
+main{min-width:0; padding-top:34px}
+
+/* ---------- sections ---------- */
+.sec{margin:0 0 60px; scroll-margin-top:20px}
+.sec-head{
+  display:flex; align-items:baseline; gap:12px; border-bottom:1.5px solid var(--ink);
+  padding-bottom:5px; margin-bottom:18px;
+}
+.sec-num{font-family:var(--f-mono); font-size:12px; color:var(--con); font-weight:600}
+.sec-head h2{
+  font-family:var(--f-disp); font-weight:700; text-transform:uppercase; letter-spacing:.01em;
+  font-size:21px; margin:0; flex:1; line-height:1.15;
+}
+.sec h3{
+  font-family:var(--f-disp); font-weight:600; text-transform:uppercase; letter-spacing:.05em;
+  font-size:13px; color:var(--graphite); margin:26px 0 8px;
+}
+.sec > p, .sec > ul, .sec > ol{max-width:74ch}
+.sec ul, .sec ol{padding-left:19px; margin:0 0 .9em}
+.sec li{margin-bottom:.3em}
+
+.claim{
+  font-family:var(--f-claim); font-style:italic; font-size:18.5px; line-height:1.5;
+  border-left:3px solid var(--con); padding:2px 0 2px 16px; margin:20px 0; max-width:62ch;
+  color:var(--ink);
+}
+.claim b{font-style:normal; font-weight:400; background:var(--tint); padding:0 3px}
+
+code, .m{font-family:var(--f-mono); font-size:.9em; background:var(--tint); padding:1px 4px; border-radius:2px}
+
+/* ---------- figures ---------- */
+figure{margin:22px 0; background:var(--plate); border:1px solid var(--rule); padding:14px 14px 0}
+figure svg{display:block; width:100%; height:auto}
+figcaption{
+  font-family:var(--f-mono); font-size:11px; color:var(--graphite); line-height:1.5;
+  border-top:1px solid var(--rule); margin-top:10px; padding:8px 0; max-width:none;
+}
+figcaption b{color:var(--ink); font-weight:600}
+
+.fs-plate{fill:none; stroke:var(--rule); stroke-width:1}
+.fs-ink{fill:none; stroke:var(--ink); stroke-width:2; stroke-linejoin:round; stroke-linecap:round}
+.fs-ink-thin{fill:none; stroke:var(--ink); stroke-width:1.2}
+.fs-hidden{fill:none; stroke:var(--graphite); stroke-width:1; stroke-dasharray:4 3.5; opacity:.65}
+.fs-mars{fill:none; stroke:var(--mars); stroke-width:1.4}
+.fs-mars-thin{fill:none; stroke:var(--mars-soft); stroke-width:1}
+.fs-con{fill:none; stroke:var(--con); stroke-width:1.2; stroke-dasharray:5 3.5}
+.fs-con-solid{fill:none; stroke:var(--con); stroke-width:1.6}
+.fs-ghost{fill:none; stroke:var(--graphite); stroke-width:.8; opacity:.45}
+.fs-fill-ink{fill:var(--ink); stroke:none}
+.fs-fill-con{fill:var(--con); stroke:none}
+.fs-fill-mars{fill:var(--mars); stroke:none}
+.fs-face{fill:var(--mars); opacity:.07; stroke:none}
+.fs-shadow{fill:var(--ink); opacity:.16; stroke:none}
+
+text{font-family:var(--f-mono); font-size:11px; fill:var(--graphite)}
+text.lbl-ink{fill:var(--ink); font-weight:600}
+text.lbl-con{fill:var(--con); font-weight:600}
+text.lbl-mars{fill:var(--mars); font-weight:600}
+text.lbl-sm{font-size:9.5px}
+
+/* ---------- interactive ---------- */
+.rig{background:var(--plate); border:1px solid var(--ink); padding:14px 14px 0; margin:0 0 8px}
+.rig-bar{
+  display:flex; flex-wrap:wrap; gap:16px; align-items:center;
+  border-top:1px solid var(--rule); margin-top:8px; padding:11px 0;
+}
+.rig-bar label{
+  font-family:var(--f-mono); font-size:11px; text-transform:uppercase; letter-spacing:.07em;
+  color:var(--graphite); display:flex; align-items:center; gap:10px; flex:1; min-width:230px;
+}
+input[type=range]{flex:1; accent-color:var(--con); min-width:110px}
+.presets{display:flex; gap:5px}
+.presets button{
+  font-family:var(--f-mono); font-size:11px; padding:4px 9px; cursor:pointer;
+  background:var(--paper); border:1px solid var(--rule); color:var(--graphite); border-radius:2px;
+}
+.presets button:hover{border-color:var(--mars); color:var(--mars)}
+.presets button:focus-visible{outline:2px solid var(--mars); outline-offset:1px}
+
+.readout{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr)); gap:0;
+  border:1px solid var(--rule); border-bottom:0; font-family:var(--f-mono); margin-bottom:22px;
+}
+.readout div{border-bottom:1px solid var(--rule); border-right:1px solid var(--rule); padding:8px 10px}
+.readout dt{font-size:9.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--graphite); margin:0 0 3px}
+.readout dd{margin:0; font-size:16px; font-weight:600; color:var(--ink)}
+.readout dd.warn{color:var(--con)}
+.readout dd.ok{color:var(--mars)}
+
+.toggles{display:flex; flex-wrap:wrap; gap:5px; padding:10px 0 0}
+.toggles button{
+  font-family:var(--f-mono); font-size:10.5px; padding:4px 9px; cursor:pointer; border-radius:2px;
+  background:var(--paper); border:1px solid var(--rule); color:var(--graphite);
+}
+.toggles button[aria-pressed=true]{background:var(--ink); border-color:var(--ink); color:var(--plate)}
+.toggles button:focus-visible{outline:2px solid var(--mars); outline-offset:1px}
+.lay-off{display:none}
+
+.calc{
+  border:1px solid var(--ink); background:var(--plate); padding:14px; margin:20px 0;
+  font-family:var(--f-mono);
+}
+.calc-in{display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:12px}
+.calc-in label{font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--graphite)}
+.calc-in input{
+  font-family:var(--f-mono); font-size:14px; width:62px; padding:4px 6px; margin-left:6px;
+  border:1px solid var(--rule); background:var(--paper); color:var(--ink); border-radius:2px;
+}
+.calc-in input:focus-visible{outline:2px solid var(--mars); outline-offset:1px}
+.calc-out{font-size:13px; line-height:1.85; border-top:1px solid var(--rule); padding-top:11px}
+.calc-out b{color:var(--con)}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto; margin:18px 0}
+table{border-collapse:collapse; width:100%; font-size:12.5px; min-width:520px}
+caption{
+  font-family:var(--f-mono); font-size:10px; text-transform:uppercase; letter-spacing:.1em;
+  color:var(--graphite); text-align:left; padding-bottom:7px;
+}
+th,td{border:1px solid var(--rule); padding:7px 9px; text-align:left; vertical-align:top}
+thead th{
+  background:var(--ink); color:var(--plate); font-family:var(--f-disp); font-weight:600;
+  text-transform:uppercase; letter-spacing:.06em; font-size:11px;
+}
+tbody th{background:var(--tint); font-family:var(--f-mono); font-weight:600; white-space:nowrap; font-size:11.5px}
+td.n{font-family:var(--f-mono); white-space:nowrap}
+tbody tr:nth-child(even) td{background:rgba(255,255,255,.4)}
+
+.note{
+  border:1px dashed var(--con-soft); background:rgba(178,58,43,.05); padding:11px 13px;
+  margin:18px 0; font-size:13.5px; max-width:74ch;
+}
+.note b{font-family:var(--f-disp); text-transform:uppercase; letter-spacing:.06em; font-size:11px; color:var(--con); display:block; margin-bottom:3px}
+
+footer{
+  border-top:2px solid var(--ink); max-width:1180px; margin:0 auto; padding:16px 22px 40px;
+  font-family:var(--f-mono); font-size:10.5px; color:var(--graphite);
+  display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap;
+}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr; gap:0}
+  .toc{position:static; padding-top:26px}
+  .toc ol{columns:2; column-gap:20px}
+  .mast-grid{grid-template-columns:1fr}
+  .titleblock{min-width:0}
+  main{padding-top:8px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+@media print{
+  body{background:#fff}
+  .toc,.rig-bar,.toggles,.presets{display:none}
+  .shell{grid-template-columns:1fr; padding:0 12px}
+  .sec{break-inside:avoid; page-break-inside:avoid}
+  figure{break-inside:avoid; page-break-inside:avoid}
+  .lay-off{display:inline}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mast-grid">
+    <div>
+      <h1 class="mast-title">Perspective<br>&amp; Composition<em>Working Datasheet</em></h1>
+      <p class="mast-sub">Constructions, constants and pass criteria for pen-and-ink and colored pencil. Written to be opened mid-drawing, not read end to end.</p>
+      <ul class="feat">
+        <li><b>Viewing distance <span class="m">d</span> is the only lens control.</b> Everything else follows from it.</li>
+        <li><b>Cone of vision</b> ties <span class="m">d</span> to subject size — the source of most "why does this look wrong."</li>
+        <li><b>Off-plate vanishing points are the normal case</b> at sketchbook scale. Compute the angle, set the triangle.</li>
+        <li><b>Composition constants derive from the rectangle</b>, not from a rule dropped on top of it.</li>
+        <li><b>Media response is not supplied.</b> §8 is a characterization procedure, not a lookup.</li>
+      </ul>
+    </div>
+    <dl class="titleblock">
+      <div><dt>Doc</dt><dd>PSP-001</dd></div>
+      <div><dt>Rev</dt><dd>1.0 — PRELIM</dd></div>
+      <div><dt>Plate</dt><dd>8&times;10 sketchbook</dd></div>
+      <div><dt>Units</dt><dd>inch, degree</dd></div>
+      <div><dt>Tooling</dt><dd>Adj. triangle, straightedge</dd></div>
+      <div><dt>Status</dt><dd>§8 uncharacterized</dd></div>
+    </dl>
+  </div>
+</header>
+
+<div class="shell">
+
+<nav class="toc" aria-label="Contents">
+  <h4>Contents</h4>
+  <ol>
+    <li><a href="#s1">Key parameters</a></li>
+    <li><a href="#s2">Vanishing points</a></li>
+    <li><a href="#s3">The horizon</a></li>
+    <li><a href="#s4">Inclined planes</a></li>
+    <li><a href="#s5">Depth spacing</a></li>
+    <li><a href="#s6">Circles &amp; ellipses</a></li>
+    <li><a href="#s7">Cast shadows</a></li>
+    <li><a href="#s8">Armature</a></li>
+    <li><a href="#s9">Media characterization</a></li>
+    <li><a href="#s10">Drills</a></li>
+    <li><a href="#s11">Caveats</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ================= HERO RIG ================= -->
+<section class="sec" id="s0" aria-labelledby="h0">
+  <div class="sec-head"><span class="sec-num">FIG. 1</span><h2 id="h0">Typical application — the lens control</h2></div>
+  <p>A 3&Prime; cube, corner-on, near edge resting on the picture plane. The <em>only</em> thing changing below is <span class="m">d</span> — where you're standing. Drag it.</p>
+
+  <div class="rig">
+    <svg id="rig-svg" viewBox="0 0 800 320" role="img" aria-label="Interactive cube in two-point perspective at variable viewing distance">
+      <defs><clipPath id="rigclip"><rect x="0" y="0" width="800" height="320"/></clipPath></defs>
+      <g clip-path="url(#rigclip)">
+        <circle id="r-cone" class="fs-con" cx="400" cy="150" r="100"/>
+        <line class="fs-mars" x1="0" y1="150" x2="800" y2="150"/>
+        <g id="r-rays"></g>
+        <g id="r-cube"></g>
+        <line class="fs-ghost" x1="392" y1="150" x2="408" y2="150"/>
+        <line class="fs-ghost" x1="400" y1="142" x2="400" y2="158"/>
+        <circle id="r-vpl" class="fs-fill-con" cx="300" cy="150" r="4"/>
+        <circle id="r-vpr" class="fs-fill-con" cx="500" cy="150" r="4"/>
+        <text id="r-vpl-t" class="lbl-con" x="300" y="140" text-anchor="middle">VP·L</text>
+        <text id="r-vpr-t" class="lbl-con" x="500" y="140" text-anchor="middle">VP·R</text>
+        <text class="lbl-mars" x="8" y="145">HORIZON</text>
+        <text class="lbl-sm" x="406" y="164">CV</text>
+        <text id="r-conet" class="lbl-con lbl-sm" x="400" y="40" text-anchor="middle">cone of vision</text>
+      </g>
+    </svg>
+    <div class="rig-bar">
+      <label for="rig-d">Viewing distance&nbsp;d
+        <input type="range" id="rig-d" min="2.5" max="15" step="0.1" value="8">
+        <span class="m" id="rig-dv" style="min-width:56px">8.0 in</span>
+      </label>
+      <div class="presets">
+        <button type="button" data-d="4">d = 4</button>
+        <button type="button" data-d="8">d = 8</button>
+        <button type="button" data-d="16" disabled style="opacity:.35">d = 16</button>
+      </div>
+    </div>
+  </div>
+
+  <dl class="readout">
+    <div><dt>VP separation</dt><dd id="o-sep">16.0&Prime;</dd></div>
+    <div><dt>Cone limit 0.58d</dt><dd id="o-cone">4.64&Prime;</dd></div>
+    <div><dt>Subject extent</dt><dd id="o-ext">3.50&Prime;</dd></div>
+    <div><dt>Status</dt><dd id="o-stat" class="ok">WITHIN</dd></div>
+  </dl>
+
+  <p class="claim">The near edge never changes. It sits on the picture plane, so it draws at a true 3.00&Prime; at every setting. <b>Everything you see moving is recession — and recession is a number you chose.</b></p>
+
+  <div class="note"><b>Read the threshold</b>Below roughly <span class="m">d = 6</span> the cube pushes outside its cone and starts to splay. It isn't drawn wrong — it's exact for an eye six inches from a three-inch cube. It reads as broken because it's being honest about an absurd place to stand.</div>
+</section>
+
+<!-- ================= 1 PARAMS ================= -->
+<section class="sec" id="s1" aria-labelledby="h1">
+  <div class="sec-head"><span class="sec-num">01</span><h2 id="h1">Key parameters</h2></div>
+  <p>The flip-to page. Everything below is derived in later sections; this is the lookup.</p>
+  <div class="tw">
+  <table>
+    <caption>Table 1 — Geometric characteristics</caption>
+    <thead><tr><th style="width:15%">Symbol</th><th style="width:32%">Parameter</th><th style="width:26%">Expression</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><th>d</th><td>Viewing distance, station point to picture plane</td><td class="n">—</td><td>The lens. At paper scale.</td></tr>
+      <tr><th>R</th><td>Subject radius from centre of vision</td><td class="n">R &le; 0.58 d</td><td>60&deg; cone. Outside it, corners smear.</td></tr>
+      <tr><th>d<sub>min</sub></th><td>Minimum viewing distance for a subject</td><td class="n">d &ge; 1.72 R</td><td>Same rule, solved the other way.</td></tr>
+      <tr><th>a, b</th><td>2-point VP distances from CV (opposite sides)</td><td class="n">d = &radic;(ab)</td><td>45&deg; box &rArr; a = b = d.</td></tr>
+      <tr><th>&mdash;</th><td>3-point consistency check</td><td class="n">d&sup2; = |H&rarr;V| &middot; |H&rarr;foot|</td><td>H = orthocentre of the VP triangle = CV.</td></tr>
+      <tr><th>&mdash;</th><td>Horizon offset under tilt &phi;</td><td class="n">d &middot; tan &phi; below CV</td><td>Tilt up &rArr; horizon drops.</td></tr>
+      <tr><th>V<sub>v</sub></th><td>Vertical VP under tilt &phi;</td><td class="n">d / tan &phi; above CV</td><td>&phi;=0 &rArr; infinity &rArr; verticals stay parallel.</td></tr>
+      <tr><th>h</th><td>Inclined-plane VP height above its ground VP</td><td class="n">h = |SP&rarr;V| &middot; tan &theta;</td><td>&theta; = real incline. Rising &rArr; above.</td></tr>
+      <tr><th>&mdash;</th><td>Armature eyes, p:q rectangle</td><td class="n">p&sup2;/(p&sup2;+q&sup2;), q&sup2;/(p&sup2;+q&sup2;)</td><td>2:3 &rArr; 4/13 and 9/13.</td></tr>
+      <tr><th>&mdash;</th><td>Rabatment</td><td class="n">square inscribed at each end</td><td>For 2:3 this lands on the exact thirds.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- ================= 2 VP ================= -->
+<section class="sec" id="s2" aria-labelledby="h2t">
+  <div class="sec-head"><span class="sec-num">02</span><h2 id="h2t">Vanishing points</h2></div>
+
+  <p class="claim">A vanishing point is a <b>direction</b>, not a place.</p>
+
+  <p>Put your eye at the origin. Take any line in the scene and walk it to infinity. Its image converges on the point where <em>a ray from your eye, parallel to that line,</em> pierces the picture plane. Note what dropped out: the line's position. Only direction survives.</p>
+  <p>So every line sharing a direction — every curb, every rail, every brick edge — shares one VP. The picture plane is a map of directions.</p>
+
+  <figure>
+    <svg viewBox="0 0 800 340" role="img" aria-label="Plan view showing that a vanishing point is where a ray from the eye parallel to a scene line pierces the picture plane">
+      <line class="fs-mars" x1="200" y1="40" x2="200" y2="300"/>
+      <text class="lbl-mars lbl-sm" x="206" y="52">PICTURE PLANE</text>
+
+      <line class="fs-ghost" x1="70" y1="200" x2="250" y2="280"/>
+      <line class="fs-ghost" x1="70" y1="200" x2="308.2" y2="265.5"/>
+      <line class="fs-ghost" x1="70" y1="200" x2="405.2" y2="241.3"/>
+      <line class="fs-ghost" x1="70" y1="200" x2="560.4" y2="202.6"/>
+      <line class="fs-ghost" x1="70" y1="200" x2="754.4" y2="154.2"/>
+
+      <line class="fs-ink" x1="250" y1="280" x2="754.4" y2="154.2"/>
+      <circle class="fs-fill-ink" cx="250" cy="280" r="3"/>
+      <circle class="fs-fill-ink" cx="308.2" cy="265.5" r="3"/>
+      <circle class="fs-fill-ink" cx="405.2" cy="241.3" r="3"/>
+      <circle class="fs-fill-ink" cx="560.4" cy="202.6" r="3"/>
+      <circle class="fs-fill-ink" cx="754.4" cy="154.2" r="3"/>
+      <text class="lbl-sm" x="640" y="180">a line in the scene &rarr; &infin;</text>
+
+      <line class="fs-con" x1="70" y1="200" x2="200" y2="167.6"/>
+      <text class="lbl-con lbl-sm" x="78" y="182">parallel ray</text>
+
+      <line class="fs-con-solid" x1="194" y1="257.8" x2="206" y2="257.8"/>
+      <line class="fs-con-solid" x1="194" y1="235.7" x2="206" y2="235.7"/>
+      <line class="fs-con-solid" x1="194" y1="216.0" x2="206" y2="216.0"/>
+      <line class="fs-con-solid" x1="194" y1="200.7" x2="206" y2="200.7"/>
+      <line class="fs-con-solid" x1="194" y1="191.3" x2="206" y2="191.3"/>
+      <circle class="fs-fill-con" cx="200" cy="167.6" r="4.5"/>
+      <text class="lbl-con" x="212" y="171">VP</text>
+
+      <circle class="fs-fill-ink" cx="70" cy="200" r="4.5"/>
+      <text class="lbl-ink" x="52" y="216">SP</text>
+      <text class="lbl-sm" x="30" y="230">station point</text>
+      <text class="lbl-sm" x="212" y="248">images crowd</text>
+      <text class="lbl-sm" x="212" y="260">toward VP</text>
+    </svg>
+    <figcaption><b>Fig. 2 — Plan view.</b> Sight-lines from SP to points marching away along one scene line. Their crossings on the picture plane bunch toward VP and never arrive. VP is the limit, and it is fixed by direction alone — slide the line anywhere in the plan and the ray, and therefore the VP, is unchanged.</figcaption>
+  </figure>
+
+  <h3>Point count is a count, not a system</h3>
+  <p>1-, 2- and 3-point aren't three methods. They're how many of a box's three edge directions are <em>not</em> parallel to the picture plane. A direction parallel to the plane never pierces it — its VP is at infinity, so it stays parallel on paper.</p>
+  <ul>
+    <li><b>1-point</b> — square-on. Width and height parallel to the plane; only depth converges.</li>
+    <li><b>2-point</b> — box rotated. Both horizontals converge, onto the horizon. Verticals still parallel.</li>
+    <li><b>3-point</b> — head tilted. The picture plane is no longer vertical, so verticals converge too.</li>
+  </ul>
+  <p>1-point is a poor teacher: VP, centre of vision and horizon all pile onto one dot and you can't see which concept is doing the work.</p>
+</section>
+
+<!-- ================= 3 HORIZON ================= -->
+<section class="sec" id="s3" aria-labelledby="h3t">
+  <div class="sec-head"><span class="sec-num">03</span><h2 id="h3t">The horizon</h2></div>
+
+  <p class="claim">The horizon is a fact about <b>you</b>, not about the world. Nothing in the scene is the horizon.</p>
+
+  <p>It's the locus of horizontal directions. Proof, in two lines: take any horizontal direction and walk it forever — you stay at your eye height, because that's what horizontal means to a level eye. The parallel ray from your eye never leaves eye height, so it pierces the plane at eye height. Every horizontal direction, no exceptions, one line.</p>
+  <p>It has a height but no distance. Stand up, it rises. Sit, it drops. Walk toward it and <em>nothing happens</em> — it's at infinity. It's welded to your eye.</p>
+
+  <h3>The eye-level cut</h3>
+  <figure>
+    <svg viewBox="0 0 800 320" role="img" aria-label="Four figures of equal height at increasing distance, all cut at the eyes by the horizon line">
+      <line class="fs-ghost" x1="30" y1="278" x2="770" y2="170.7" stroke-dasharray="3 4"/>
+      <g class="fs-fill-ink" opacity=".82">
+        <path d="M96.8 278 L102.2 162.2 L117.8 162.2 L123.2 278 Z"/>
+        <circle cx="110" cy="148.6" r="6.8"/>
+        <path d="M291.2 219.6 L294.1 154.6 L305.9 154.6 L308.8 219.6 Z"/>
+        <circle cx="300" cy="149.3" r="3.7"/>
+        <path d="M463.4 188.5 L465.0 151.3 L474.9 151.3 L476.6 188.5 Z"/>
+        <circle cx="470" cy="149.6" r="2.05"/>
+        <path d="M605.1 170.7 L605.9 149.7 L614.1 149.7 L614.9 170.7 Z"/>
+        <circle cx="610" cy="149.8" r="1.1"/>
+      </g>
+      <line class="fs-mars" x1="20" y1="150" x2="780" y2="150"/>
+      <text class="lbl-mars" x="20" y="143">HORIZON = YOUR EYE LEVEL</text>
+      <text class="lbl-sm" x="96" y="298">z = 12&prime;</text>
+      <text class="lbl-sm" x="286" y="240">z = 22&prime;</text>
+      <text class="lbl-sm" x="456" y="208">z = 40&prime;</text>
+      <text class="lbl-sm" x="596" y="190">z = 75&prime;</text>
+      <text class="lbl-con lbl-sm" x="655" y="143">&larr; every set of eyes, on one line</text>
+      <text class="lbl-sm" x="655" y="288">bases march</text>
+      <text class="lbl-sm" x="655" y="300">toward it &mdash;</text>
+      <text class="lbl-sm" x="655" y="312">eyes never leave</text>
+    </svg>
+    <figcaption><b>Fig. 3 — Four figures, one height, four distances.</b> The horizon cuts every one of them at the eyes. Near ones huge, far ones tiny; the cut is identical. Fastest error-check in perspective, and the fastest way to place a figure — you need no VP, just put the horizon through their eyes and scale until it reads.</figcaption>
+  </figure>
+
+  <p>Which means the horizon tells the viewer where their own body is. If it cuts a doorway at the knee, your reader is a toddler, or lying on the floor. You aren't describing the door. You're positioning a skull.</p>
+
+  <h3>Horizon &ne; centre of vision</h3>
+  <p>Constantly collapsed, genuinely different: the <b>horizon</b> is a line — where you <em>are</em>. The <b>centre of vision</b> is a point — where you're <em>aimed</em>. They coincide only when you look level.</p>
+
+  <figure>
+    <svg viewBox="0 0 800 340" role="img" aria-label="Two panels comparing a level view where centre of vision lies on the horizon with a tilted view where they separate">
+      <rect class="fs-plate" x="40" y="40" width="340" height="260"/>
+      <line class="fs-mars" x1="40" y1="170" x2="380" y2="170"/>
+      <path class="fs-ink" d="M160 285 L160 80 L260 80 L260 285"/>
+      <line class="fs-ink-thin" x1="160" y1="285" x2="260" y2="285"/>
+      <line class="fs-ghost" x1="202" y1="170" x2="218" y2="170"/>
+      <line class="fs-ghost" x1="210" y1="162" x2="210" y2="178"/>
+      <circle class="fs-fill-mars" cx="210" cy="170" r="3"/>
+      <text class="lbl-mars lbl-sm" x="46" y="164">HORIZON</text>
+      <text class="lbl-sm" x="218" y="184">CV</text>
+      <text class="lbl-ink lbl-sm" x="40" y="322">&phi; = 0&deg; &mdash; CV lies ON the horizon</text>
+
+      <rect class="fs-plate" x="420" y="40" width="340" height="260"/>
+      <path class="fs-ink" d="M540 285 L567.3 80 L612.7 80 L640 285"/>
+      <line class="fs-ink-thin" x1="540" y1="285" x2="640" y2="285"/>
+      <line class="fs-mars" x1="420" y1="256.6" x2="760" y2="256.6"/>
+      <line class="fs-con" x1="590" y1="46" x2="590" y2="256.6"/>
+      <line class="fs-ghost" x1="582" y1="170" x2="598" y2="170"/>
+      <line class="fs-ghost" x1="590" y1="162" x2="590" y2="178"/>
+      <circle class="fs-fill-mars" cx="590" cy="170" r="3"/>
+      <path class="fs-con-solid" d="M590 62 L585 74 L595 74 Z" fill="var(--con)"/>
+      <text class="lbl-con lbl-sm" x="600" y="60">V&#8593; &mdash; 260 above CV, off plate</text>
+      <text class="lbl-sm" x="600" y="176">CV (where you aim)</text>
+      <text class="lbl-mars lbl-sm" x="426" y="250">HORIZON (where you are)</text>
+      <text class="lbl-con lbl-sm" x="596" y="222">d&middot;tan&phi; = 86.6</text>
+      <text class="lbl-ink lbl-sm" x="420" y="322">&phi; = 30&deg; &mdash; they separate</text>
+    </svg>
+    <figcaption><b>Fig. 4 — Level vs. tilted.</b> Tilt up and the horizon drops <span class="m">d&middot;tan&phi;</span> below the CV while the vertical VP climbs to <span class="m">d/tan&phi;</span> above it. Your eye height didn't change; it just left the frame. Product of those two distances is <span class="m">d&sup2;</span> — the same relation as <span class="m">d = &radic;(ab)</span> in 2-point, wearing a different hat.</figcaption>
+  </figure>
+</section>
+
+<!-- ================= 4 INCLINES ================= -->
+<section class="sec" id="s4" aria-labelledby="h4t">
+  <div class="sec-head"><span class="sec-num">04</span><h2 id="h4t">Inclined planes</h2></div>
+  <p>Since the horizon is the set of <em>horizontal</em> directions, any VP off the horizon belongs to a direction that isn't horizontal. Ramps, stairs, roof planes. And the method falls out for free:</p>
+  <p class="claim">An incline's VP sits <b>directly above the VP of the horizontal direction it follows</b>. Same left-right position, raised by <span class="m">h = |SP&rarr;V| &middot; tan &theta;</span>. Descending, lower it by the same amount.</p>
+
+  <figure>
+    <svg viewBox="0 0 800 260" role="img" aria-label="A ramp vanishing point stacked directly above the ground vanishing point on the horizon">
+      <line class="fs-mars" x1="20" y1="120" x2="780" y2="120"/>
+      <text class="lbl-mars lbl-sm" x="20" y="114">HORIZON</text>
+
+      <path class="fs-face" d="M140 230 L600 54.5 L600 120 L140 230 Z"/>
+      <line class="fs-mars-thin" x1="140" y1="230" x2="600" y2="120"/>
+      <line class="fs-mars-thin" x1="250" y1="248" x2="600" y2="120"/>
+      <line class="fs-ink" x1="140" y1="230" x2="600" y2="54.5"/>
+      <line class="fs-ink" x1="250" y1="248" x2="600" y2="54.5"/>
+      <line class="fs-ink" x1="140" y1="230" x2="250" y2="248"/>
+
+      <line class="fs-con" x1="600" y1="54.5" x2="600" y2="120"/>
+      <circle class="fs-fill-con" cx="600" cy="54.5" r="4.5"/>
+      <circle class="fs-plate" cx="600" cy="120" r="4.5" stroke="var(--con)" stroke-width="1.6" fill="var(--plate)"/>
+      <text class="lbl-con" x="612" y="50">V&#8593; ramp VP</text>
+      <text class="lbl-con lbl-sm" x="612" y="126">V ground VP</text>
+      <text class="lbl-con lbl-sm" x="608" y="92">h = 65.5</text>
+      <text class="lbl-sm" x="300" y="150">ramp surface</text>
+      <text class="lbl-sm" x="300" y="212">ground below it</text>
+      <text class="lbl-ink lbl-sm" x="20" y="248">&theta; = 20&deg;, d = 180 &rArr; h = 180 &middot; tan 20&deg; = 65.5</text>
+    </svg>
+    <figcaption><b>Fig. 5 — Stacked VPs.</b> Ramp edges converge to V&#8593;; the ground under them converges to V on the horizon. The two VPs share an x. <b>Careful:</b> &theta; is the real incline, not the angle you see at the near corner — those are different numbers, and only &theta; goes in the formula.</figcaption>
+  </figure>
+  <p>A staircase is the same object with the tread/riser detail added. Nosings go to V&#8593;. Risers are vertical planes whose horizontal edges are, still, horizontal — so those go to the horizon.</p>
+</section>
+
+<!-- ================= 5 DEPTH ================= -->
+<section class="sec" id="s5" aria-labelledby="h5t">
+  <div class="sec-head"><span class="sec-num">05</span><h2 id="h5t">Depth spacing</h2></div>
+  <p>Angles are the easy half. <em>How far apart the fence posts go</em> is what people get wrong, and it needs no VP access at all — which matters, because at 8&times;10 you rarely have any.</p>
+
+  <figure>
+    <svg viewBox="0 0 800 300" role="img" aria-label="Fence post construction generating evenly spaced posts in perspective">
+      <line class="fs-mars" x1="20" y1="90" x2="780" y2="90"/>
+      <text class="lbl-mars lbl-sm" x="20" y="84">HORIZON</text>
+      <circle class="fs-fill-con" cx="740" cy="90" r="4.5"/>
+      <text class="lbl-con" x="716" y="80">VP</text>
+
+      <line class="fs-mars-thin" x1="80" y1="130" x2="740" y2="90"/>
+      <line class="fs-mars-thin" x1="80" y1="265" x2="740" y2="90"/>
+
+      <line class="fs-ink" x1="80" y1="130" x2="80" y2="265"/>
+      <line class="fs-ink" x1="250" y1="119.7" x2="250" y2="219.9"/>
+      <text class="lbl-ink lbl-sm" x="64" y="283">post 1</text>
+      <text class="lbl-ink lbl-sm" x="234" y="238">post 2</text>
+      <text class="lbl-sm" x="52" y="296">given</text>
+      <text class="lbl-sm" x="228" y="251">by eye</text>
+
+      <circle class="fs-fill-con" cx="250" cy="169.8" r="3.5"/>
+      <text class="lbl-con lbl-sm" x="258" y="167">M&#8322;</text>
+      <circle class="fs-fill-con" cx="350.3" cy="153.5" r="3.5"/>
+      <text class="lbl-con lbl-sm" x="358" y="151">M&#8323;</text>
+
+      <line class="fs-con" x1="80" y1="265" x2="350.3" y2="113.6"/>
+      <line class="fs-con" x1="250" y1="219.9" x2="416.6" y2="109.6"/>
+
+      <line class="fs-ink" x1="350.3" y1="113.6" x2="350.3" y2="193.3"/>
+      <line class="fs-ink" x1="416.6" y1="109.6" x2="416.6" y2="175.7"/>
+      <text class="lbl-ink lbl-sm" x="336" y="211">post 3</text>
+      <text class="lbl-ink lbl-sm" x="402" y="193">post 4</text>
+      <text class="lbl-sm" x="330" y="224">derived</text>
+      <text class="lbl-sm" x="396" y="206">derived</text>
+
+      <text class="lbl-con lbl-sm" x="120" y="248">bottom of n &rarr; midpoint of n+1 &rarr; top rail = top of n+2</text>
+      <text class="lbl-sm" x="470" y="150">&hellip; repeat to infinity</text>
+    </svg>
+    <figcaption><b>Fig. 6 — The fence-post construction.</b> Draw the rails and the first two posts. Then: from the <b>bottom</b> of post <i>n</i>, through the <b>midpoint</b> of post <i>n+1</i>, extend to the <b>top rail</b>. That's the top of post <i>n+2</i>. Drop a vertical, repeat. Correctly foreshortened, no measuring, no VP needed.</figcaption>
+  </figure>
+
+  <h3>Why it works</h3>
+  <p>The line from post 1's bottom to post 3's top is the diagonal of a real-space rectangle. Its centre sits at post 2 — horizontally because post 2 is halfway, vertically at post 2's midpoint. Projection preserves incidence, so the construction survives into the image intact.</p>
+
+  <h3>Pass criterion, pinless</h3>
+  <p>Tile the floor in squares, then lay a straightedge along the diagonals of tile 1 &rarr; 2 &rarr; 3 going back. Those are <em>one straight line</em> in real space, so they must be collinear on paper. If the straightedge kisses all three, your depth rate is right. If the diagonal VP happens to be on the plate, pin it as a second opinion — every tile diagonal should hit it.</p>
+</section>
+
+<!-- ================= 6 ELLIPSES ================= -->
+<section class="sec" id="s6" aria-labelledby="h6t">
+  <div class="sec-head"><span class="sec-num">06</span><h2 id="h6t">Circles &amp; ellipses</h2></div>
+  <p>The gap that perspective study never covers, and the one that decides whether a shell, a wheel or a cup reads as solid.</p>
+
+  <figure>
+    <svg viewBox="0 0 800 340" role="img" aria-label="Left panel: minor axis of an ellipse aligns with the axis of revolution. Right panel: the perspective centre of a circle is not the centre of its ellipse.">
+      <line class="fs-con" x1="110" y1="302.5" x2="290" y2="47.5"/>
+      <text class="lbl-con lbl-sm" x="286" y="42">axis of revolution</text>
+      <line class="fs-ink" x1="184.9" y1="291.7" x2="294.3" y2="114.2"/>
+      <line class="fs-ink" x1="95.1" y1="228.3" x2="225.7" y2="65.8"/>
+      <ellipse class="fs-hidden" cx="140" cy="260" rx="55" ry="18"/>
+      <text class="lbl-sm" x="46" y="300">&#10007; minor axis vertical</text>
+      <ellipse class="fs-ink" cx="260" cy="90" rx="42" ry="14" transform="rotate(35.2 260 90)"/>
+      <ellipse class="fs-ink" cx="140" cy="260" rx="55" ry="18" transform="rotate(35.2 140 260)"/>
+      <line class="fs-con-solid" x1="150.4" y1="245.3" x2="129.6" y2="274.7" stroke-width="3"/>
+      <text class="lbl-con lbl-sm" x="152" y="242">minor axis</text>
+      <text class="lbl-ink lbl-sm" x="40" y="326">Minor axis &#8741; axis. Always. Not the box's vertical.</text>
+
+      <line class="fs-mars-thin" x1="450" y1="280" x2="595" y2="70"/>
+      <line class="fs-mars-thin" x1="740" y1="280" x2="595" y2="70"/>
+      <circle class="fs-fill-mars" cx="595" cy="70" r="3.5"/>
+      <text class="lbl-mars lbl-sm" x="602" y="68">VP</text>
+      <path class="fs-mars" d="M450 280 L740 280 L671 180 L519 180 Z"/>
+      <line class="fs-con" x1="450" y1="280" x2="671" y2="180"/>
+      <line class="fs-con" x1="740" y1="280" x2="519" y2="180"/>
+      <ellipse class="fs-ink" cx="595" cy="230" rx="104.9" ry="50"/>
+      <line class="fs-con-solid" x1="587" y1="214.4" x2="603" y2="214.4"/>
+      <line class="fs-con-solid" x1="595" y1="206.4" x2="595" y2="222.4"/>
+      <circle class="fs-plate" cx="595" cy="230" r="4" stroke="var(--ink)" stroke-width="1.6" fill="var(--plate)"/>
+      <text class="lbl-con lbl-sm" x="606" y="211">TRUE centre of the circle</text>
+      <text class="lbl-ink lbl-sm" x="606" y="243">centre of the ellipse</text>
+      <line class="fs-ghost" x1="470" y1="180" x2="470" y2="280"/>
+      <line class="fs-ghost" x1="464" y1="180" x2="476" y2="180"/>
+      <line class="fs-ghost" x1="464" y1="214.4" x2="476" y2="214.4"/>
+      <line class="fs-ghost" x1="464" y1="280" x2="476" y2="280"/>
+      <text class="lbl-sm" x="424" y="200">34.4</text>
+      <text class="lbl-sm" x="424" y="252">65.6</text>
+      <text class="lbl-ink lbl-sm" x="420" y="326">Far half is smaller. The two centres are 15.6 apart.</text>
+    </svg>
+    <figcaption><b>Fig. 7 — Two rules.</b> Left: the ellipse's minor axis lies along the <b>axis of revolution</b>, and that axis has its own VP. Not the vertical of the box you drew it in. Right: diagonals of the perspective square give the circle's true centre — which is <b>not</b> the ellipse's centre. The ellipse is symmetric; the circle inside it isn't.</figcaption>
+  </figure>
+
+  <h3>Why the centres differ</h3>
+  <p>The near and far edges of the square are parallel to the picture plane, so their tangent points form a genuine diameter, and the ellipse's centre is its midpoint. But the side edges <em>converge</em> — so their tangent points are not a diameter. The circle's centre lands where the diagonals cross, further back. Every construction that assumes the ellipse's centre is the circle's centre inherits this error.</p>
+
+  <h3>8-point construction</h3>
+  <ol>
+    <li>Draw the square in perspective.</li>
+    <li>Diagonals &rarr; true centre.</li>
+    <li>Through it, the two perspective midlines &rarr; four tangent points on the sides.</li>
+    <li>Four more points along the diagonals, at the perspective image of 0.707 of the half-diagonal.</li>
+    <li>Draw through all eight. Do not draw a symmetric ellipse and hope.</li>
+  </ol>
+
+  <div class="note"><b>Application &mdash; shells and spirals</b>A conch is a stack of ellipses growing along a curving axis, each one's minor axis aligned to the <em>local</em> axis direction. Establish the axis curve first, then hang the ellipses on it. The shell becomes constructible instead of hopeful.</div>
+</section>
+
+<!-- ================= 7 SHADOWS ================= -->
+<section class="sec" id="s7" aria-labelledby="h7t">
+  <div class="sec-head"><span class="sec-num">07</span><h2 id="h7t">Cast shadows</h2></div>
+  <p>Underrated, and purely mechanical once you have two points.</p>
+
+  <figure>
+    <svg viewBox="0 0 800 320" role="img" aria-label="Cast shadow construction using a light vanishing point below the horizon and a shadow vanishing point on the horizon">
+      <line class="fs-mars" x1="20" y1="110" x2="780" y2="110"/>
+      <text class="lbl-mars lbl-sm" x="20" y="104">HORIZON</text>
+
+      <path class="fs-shadow" d="M220 240 L379.2 179.2 L226 243 Z"/>
+      <path class="fs-shadow" d="M420 265 L491.7 185.6 L426 268 Z"/>
+
+      <line class="fs-con" x1="560" y1="235" x2="220" y2="130"/>
+      <line class="fs-con" x1="560" y1="235" x2="420" y2="133.9"/>
+      <line class="fs-con" x1="220" y1="240" x2="560" y2="110"/>
+      <line class="fs-con" x1="420" y1="265" x2="560" y2="110"/>
+
+      <line class="fs-ink" x1="220" y1="240" x2="220" y2="130" stroke-width="3.5"/>
+      <line class="fs-ink" x1="420" y1="265" x2="420" y2="133.9" stroke-width="3.5"/>
+      <line class="fs-ink" x1="220" y1="240" x2="379.2" y2="179.2"/>
+      <line class="fs-ink" x1="420" y1="265" x2="491.7" y2="185.6"/>
+      <circle class="fs-fill-ink" cx="379.2" cy="179.2" r="3"/>
+      <circle class="fs-fill-ink" cx="491.7" cy="185.6" r="3"/>
+
+      <line class="fs-con-solid" x1="560" y1="110" x2="560" y2="235" stroke-dasharray="4 3"/>
+      <circle class="fs-fill-con" cx="560" cy="235" r="5"/>
+      <circle class="fs-plate" cx="560" cy="110" r="5" stroke="var(--con)" stroke-width="1.8" fill="var(--plate)"/>
+      <text class="lbl-con" x="572" y="239">LIGHT VP</text>
+      <text class="lbl-con lbl-sm" x="572" y="252">rays converge here</text>
+      <text class="lbl-con" x="572" y="106">SHADOW VP</text>
+      <text class="lbl-con lbl-sm" x="572" y="119">ground shadows converge here</text>
+      <text class="lbl-con lbl-sm" x="566" y="176">same x</text>
+      <text class="lbl-sm" x="330" y="200">tip</text>
+      <text class="lbl-ink lbl-sm" x="20" y="300">Sun BEHIND the viewer &rArr; light VP below the horizon, shadows run away from you.</text>
+      <text class="lbl-sm" x="20" y="314">Sun IN FRONT &rArr; light VP is the sun itself, above the horizon; shadows come toward you.</text>
+    </svg>
+    <figcaption><b>Fig. 8 — Two points and you're done.</b> Shadow of a vertical: run a line from its <b>base</b> to the shadow VP; run a ray from the <b>light VP</b> through its <b>top</b>. They cross at the tip. The two VPs always share an x — the shadow VP is the light's foot on the horizon. Lamp instead of sun? The light VP <em>is</em> the bulb, and the shadow VP is the point on the floor beneath it.</figcaption>
+  </figure>
+  <p>Sun exactly to the side is the degenerate case: the light VP goes to infinity and the shadows come out parallel.</p>
+</section>
+
+<!-- ================= 8 ARMATURE ================= -->
+<section class="sec" id="s8" aria-labelledby="h8t">
+  <div class="sec-head"><span class="sec-num">08</span><h2 id="h8t">Armature</h2></div>
+
+  <p class="claim">The rule of thirds is a grid dropped onto any rectangle. The armature is <b>generated by the rectangle's own proportion</b>. Nothing is chosen — you run the construction and the rectangle tells you where its structural lines are.</p>
+
+  <h3>Four families, strongest first</h3>
+  <ol>
+    <li><b>Diagonals</b> — corner to corner.</li>
+    <li><b>Eyes</b> — from each remaining corner, drop a perpendicular onto each diagonal. The foot is an eye. Four total.</li>
+    <li><b>Reciprocals</b> — extend those perpendiculars past the eye to a side. That cuts off a rectangle of the same proportion, rotated 90&deg;.</li>
+    <li><b>Rabatment</b> — inscribe a square flush at each end. The far edge of each is a rabatment line.</li>
+  </ol>
+  <p>Medians are technically armature and are the weakest thing in the system. Dead-centre bisection is inert.</p>
+
+  <figure>
+    <svg viewBox="0 0 800 440" role="img" aria-label="Armature of a 2 by 3 rectangle showing diagonals, eyes, reciprocals, rabatment and medians">
+      <g id="lay-med" class="lay">
+        <line class="fs-ghost" x1="400" y1="40" x2="400" y2="400"/>
+        <line class="fs-ghost" x1="280" y1="220" x2="520" y2="220"/>
+      </g>
+      <g id="lay-rab" class="lay">
+        <rect class="fs-mars-thin" x="280" y="40" width="240" height="240" stroke-dasharray="3 3"/>
+        <rect class="fs-mars-thin" x="280" y="160" width="240" height="240" stroke-dasharray="3 3"/>
+        <line class="fs-mars" x1="280" y1="280" x2="520" y2="280"/>
+        <line class="fs-mars" x1="280" y1="160" x2="520" y2="160"/>
+        <text class="lbl-mars lbl-sm" x="528" y="164">rabatment = 1/3</text>
+        <text class="lbl-mars lbl-sm" x="528" y="284">rabatment = 2/3</text>
+      </g>
+      <g id="lay-rec" class="lay">
+        <line class="fs-con-solid" x1="520" y1="40" x2="280" y2="200" stroke-dasharray="6 4"/>
+        <line class="fs-con-solid" x1="280" y1="40" x2="520" y2="200" stroke-dasharray="6 4"/>
+        <line class="fs-con-solid" x1="520" y1="400" x2="280" y2="240" stroke-dasharray="6 4"/>
+        <line class="fs-con-solid" x1="280" y1="400" x2="520" y2="240" stroke-dasharray="6 4"/>
+      </g>
+      <g id="lay-diag" class="lay">
+        <line class="fs-ink-thin" x1="280" y1="40" x2="520" y2="400" stroke-width="1.8"/>
+        <line class="fs-ink-thin" x1="520" y1="40" x2="280" y2="400" stroke-width="1.8"/>
+      </g>
+      <rect class="fs-ink" x="280" y="40" width="240" height="360"/>
+      <g id="lay-eyes" class="lay">
+        <circle class="fs-fill-con" cx="353.85" cy="150.77" r="5"/>
+        <circle class="fs-fill-con" cx="446.15" cy="150.77" r="5"/>
+        <circle class="fs-fill-con" cx="353.85" cy="289.23" r="5"/>
+        <circle class="fs-fill-con" cx="446.15" cy="289.23" r="5"/>
+        <line class="fs-ghost" x1="280" y1="150.77" x2="353.85" y2="150.77"/>
+        <line class="fs-ghost" x1="353.85" y1="40" x2="353.85" y2="150.77"/>
+        <text class="lbl-con lbl-sm" x="196" y="148">4/13 = .3077</text>
+        <text class="lbl-con lbl-sm" x="196" y="292">9/13 = .6923</text>
+        <text class="lbl-con lbl-sm" x="300" y="32">4/13</text>
+        <text class="lbl-con lbl-sm" x="392" y="32">9/13</text>
+      </g>
+      <text class="lbl-ink lbl-sm" x="40" y="60">2 : 3</text>
+      <text class="lbl-sm" x="40" y="76">16&times;24 or 20&times;30</text>
+      <text class="lbl-sm" x="40" y="100">Eyes at 4/13 and</text>
+      <text class="lbl-sm" x="40" y="114">9/13 of BOTH sides.</text>
+      <text class="lbl-sm" x="40" y="138">Rabatment lands</text>
+      <text class="lbl-sm" x="40" y="152">on the exact thirds</text>
+      <text class="lbl-sm" x="40" y="166">&mdash; only because</text>
+      <text class="lbl-sm" x="40" y="180">this is 2:3.</text>
+      <text class="lbl-sm" x="40" y="204">Eyes miss thirds by</text>
+      <text class="lbl-sm" x="40" y="218">.026 of the height</text>
+      <text class="lbl-sm" x="40" y="232">= 0.62&Prime; at 16&times;24.</text>
+    </svg>
+    <div class="toggles" role="group" aria-label="Armature layers">
+      <button type="button" data-lay="lay-diag" aria-pressed="true">Diagonals</button>
+      <button type="button" data-lay="lay-eyes" aria-pressed="true">Eyes</button>
+      <button type="button" data-lay="lay-rec" aria-pressed="false">Reciprocals</button>
+      <button type="button" data-lay="lay-rab" aria-pressed="false">Rabatment</button>
+      <button type="button" data-lay="lay-med" aria-pressed="false">Medians</button>
+    </div>
+    <figcaption><b>Fig. 9 — Armature of a 2:3 plate.</b> Toggle the families; the composite is unreadable all at once, which is itself the point — pick the family you're using and ignore the rest.</figcaption>
+  </figure>
+
+  <h3>The eye is a spiral pole</h3>
+  <p>Cut the reciprocal, then run the construction inside it. Then inside that one. The nested reciprocals shrink and rotate and converge — on the eye. The eye is the pole of the logarithmic spiral the rectangle generates from its own proportion. Equivalently, and more usefully at the board: <b>the eye is where the diagonal crosses the reciprocal's diagonal.</b></p>
+
+  <figure>
+    <svg viewBox="0 0 800 440" role="img" aria-label="Nested reciprocal rectangles spiralling into the eye of a 2 by 3 rectangle">
+      <line class="fs-ink-thin" x1="280" y1="40" x2="520" y2="400" stroke-width="1.6"/>
+      <line class="fs-con-solid" x1="520" y1="40" x2="280" y2="200"/>
+      <rect class="fs-ink" x="280" y="40" width="240" height="360"/>
+      <rect class="fs-mars" x="280" y="40" width="240" height="160"/>
+      <rect class="fs-mars" x="280" y="40" width="106.67" height="160"/>
+      <rect class="fs-mars-thin" x="280" y="128.89" width="106.67" height="71.11"/>
+      <rect class="fs-mars-thin" x="339.26" y="128.89" width="47.41" height="71.11"/>
+      <rect class="fs-mars-thin" x="339.26" y="128.89" width="47.41" height="31.60"/>
+      <rect class="fs-mars-thin" x="339.26" y="128.89" width="21.07" height="31.60"/>
+      <rect class="fs-mars-thin" x="339.26" y="146.44" width="21.07" height="14.05"/>
+      <rect class="fs-mars-thin" x="350.96" y="146.44" width="9.37" height="14.05"/>
+      <circle class="fs-fill-con" cx="353.85" cy="150.77" r="5"/>
+      <text class="lbl-con lbl-sm" x="366" y="146">the eye = the pole</text>
+      <text class="lbl-ink lbl-sm" x="40" y="60">R&#8320; 240&times;360 &mdash; 2:3</text>
+      <text class="lbl-sm" x="40" y="80">R&#8321; 240&times;160 &mdash; 3:2</text>
+      <text class="lbl-sm" x="40" y="96">R&#8322; 106.7&times;160 &mdash; 2:3</text>
+      <text class="lbl-sm" x="40" y="112">R&#8323; 106.7&times;71.1 &mdash; 3:2</text>
+      <text class="lbl-sm" x="40" y="128">R&#8324; 47.4&times;71.1 &mdash; 2:3</text>
+      <text class="lbl-sm" x="40" y="144">&hellip; forever</text>
+      <text class="lbl-sm" x="40" y="176">Each is the previous</text>
+      <text class="lbl-sm" x="40" y="190">one's proportion,</text>
+      <text class="lbl-sm" x="40" y="204">rotated 90&deg;, scaled</text>
+      <text class="lbl-sm" x="40" y="218">by 2/3, rotating</text>
+      <text class="lbl-sm" x="40" y="232">top&rarr;left&rarr;bottom&rarr;right.</text>
+      <text class="lbl-con lbl-sm" x="556" y="60">diagonal &amp; reciprocal</text>
+      <text class="lbl-con lbl-sm" x="556" y="74">diagonal cross AT the eye</text>
+    </svg>
+    <figcaption><b>Fig. 10 — Nesting reciprocals.</b> Eight generations shown. A logarithmic spiral, converging on a pole, generated by the proportion of the frame itself.</figcaption>
+  </figure>
+
+  <div class="calc">
+    <div class="calc-in">
+      <label>p (short side)<input type="number" id="cp" value="2" min="0.1" step="0.1"></label>
+      <label>q (long side)<input type="number" id="cq" value="3" min="0.1" step="0.1"></label>
+    </div>
+    <div class="calc-out" id="cout" aria-live="polite"></div>
+  </div>
+
+  <h3>Why the rule of thirds "works"</h3>
+  <p>Now you can see the trick. For 2:3, rabatment coincides with the thirds <em>exactly</em>, and the eyes come within 0.026 of the height. 2:3 is the most common photographic and drawing ratio in the world. The rule of thirds is a degenerate approximation that happens to be nearly right for the one ratio everybody uses — and then gets generalised to ratios where it's simply wrong. For &phi;, the eyes sit at 0.276 and 0.724. Thirds miss badly.</p>
+
+  <div class="note"><b>Application &mdash; plate seams</b>Three 8&times;16 plates on a 16&times;24 put the seams at 8&Prime; and 16&Prime; — dead on the rabatment lines, because for 2:3 rabatment <em>is</em> the thirds. Two 8&times;24 plates put a single seam on the vertical median: the weakest line in the system, carrying the most physically conspicuous feature on the piece. The eyes sit 0.62&Prime; inside each seam, so you can play them against each other — a focal event on the eye, the seam running just past it. Two structural lines slightly out of phase generate tension neither has alone.</div>
+</section>
+
+<!-- ================= 9 MEDIA ================= -->
+<section class="sec" id="s9" aria-labelledby="h9t">
+  <div class="sec-head"><span class="sec-num">09</span><h2 id="h9t">Media characterization</h2></div>
+  <div class="note"><b>Typical values not supplied</b>Everything above is geometry and holds for any hand. This section does not. It has to be measured on your paper, with your pens, by you — and then it's worth more than anything else in this document.</div>
+
+  <h3>Why a printed grey scale is a lie</h3>
+  <p>In pen work the mark and the value are not separable. A generic 9-step ramp tells you nothing about where <em>your</em> hatching stops getting darker and starts getting muddy. That threshold is the single most useful number in your kit, and it's different for every nib and paper.</p>
+
+  <div class="tw">
+  <table>
+    <caption>Table 2 — Characterization procedure</caption>
+    <thead><tr><th style="width:22%">Test</th><th style="width:38%">Method</th><th>Extract</th></tr></thead>
+    <tbody>
+      <tr><th>Ink ramps</th><td>Each mark type — hatch, cross-hatch, contour hatch, stipple, scribble — pushed from lightest to your true black in one strip.</td><td>Where each type <b>tops out</b>, and where it goes muddy rather than dark. These differ.</td></tr>
+      <tr><th>Black point</th><td>Darkest achievable per tool, per paper.</td><td>Your actual dynamic range. Compose inside it.</td></tr>
+      <tr><th>Pencil pressure</th><td>One colour, light &rarr; full pressure, in a strip.</td><td>Usable pressure band before the tooth loads up.</td></tr>
+      <tr><th>Pencil layers</th><td>Same colour, 1 &rarr; 6 layers at constant light pressure.</td><td>Layers vs. pressure give different darks. Know which.</td></tr>
+      <tr><th>Palette values</th><td>Every pencil, full and light, labelled. <b>Then photograph and desaturate.</b></td><td>Which colours are secretly the same value. This is why passages go flat no matter how much chroma you throw at them.</td></tr>
+      <tr><th>Frottage response</th><td>Colour over a rubbed texture at several pressures.</td><td>Which pressures ride the texture and which kill it. Exists in no book.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>Notan before any of it: 3 or 4 values, thumbnail sized. If the composition doesn't hold at four values it will not be rescued at forty.</p>
+</section>
+
+<!-- ================= 10 DRILLS ================= -->
+<section class="sec" id="s10" aria-labelledby="h10t">
+  <div class="sec-head"><span class="sec-num">10</span><h2 id="h10t">Drills</h2></div>
+  <p>Sized for an 8&times;10 book. Each targets the one thing that's hard at that point count. In order — D2 and D3 assume D1 is internalised.</p>
+
+  <div class="tw">
+  <table>
+    <caption>Table 3 — Drill sheet, 8&times;10</caption>
+    <thead><tr><th style="width:9%">ID</th><th style="width:19%">Setup</th><th style="width:26%">Geometry</th><th style="width:22%">Teaches</th><th>Pass criterion</th></tr></thead>
+    <tbody>
+      <tr>
+        <th>D1</th>
+        <td>Corridor.<br>10 wide &times; 8 tall.</td>
+        <td class="n">d = 7&Prime;<br>VP @ 2.5&Prime; from left, 3.5&Prime; up<br>45&deg; diag. VP @ 9.5&Prime; — <b>on plate</b><br>cone R = 4.06&Prime;</td>
+        <td>Depth rate. Angles are free in 1-point; the foreshortening rate is the whole test.</td>
+        <td>Tile diagonals collinear across three tiles under a straightedge. Diagonal VP as second opinion.</td>
+      </tr>
+      <tr>
+        <th>D2</th>
+        <td>One cube, three lenses.<br>10 &times; 8. 2&Prime; cube, corner-on, near edge on CV, 0.5&Prime;–2.5&Prime; below horizon.</td>
+        <td class="n">d = 4 &rarr; VP @ &plusmn;4 — on plate<br>d = 8 &rarr; VP @ &plusmn;8 — off<br>d = 16 &rarr; VP @ &plusmn;16 — far off</td>
+        <td>That VP spread <em>is</em> the lens, in your hands, whether or not you're thinking about it.</td>
+        <td>At d=4 the cube visibly busts its 2.32&Prime; cone. Draw the cone circle — the smear starts exactly at the line.</td>
+      </tr>
+      <tr>
+        <th>D3</th>
+        <td>Worm's-eye tower.<br>8 wide &times; 10 tall, portrait.</td>
+        <td class="n">d = 5&Prime;, &phi; = 30&deg;, CV @ (4, 1)<br>V&#8593; @ (4, 9.66) — on plate<br>horizon @ y = &minus;1.89 — off<br>V<sub>h</sub> @ (&minus;1.77, &minus;1.89), (9.77, &minus;1.89)</td>
+        <td>Finding and trusting a third VP. Deliberately blows the cone — that's the source of the drama.</td>
+        <td>Orthocentre of the VP triangle lands on the CV. Then 8.66 &times; 2.89 = 25.0 = 5&sup2;.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h3>D2 angle table — for the off-plate VPs</h3>
+  <p>Near edge sits on the CV, so the slope to a VP is just (height below horizon) &divide; d. Compute, set on the triangle, draw. Mirror for the other side.</p>
+  <div class="tw">
+  <table style="min-width:340px">
+    <caption>Table 4 — Edge angles from horizontal</caption>
+    <thead><tr><th>d</th><th>top edge (0.5&Prime;)</th><th>bottom edge (2.5&Prime;)</th><th>cone limit</th></tr></thead>
+    <tbody>
+      <tr><th>4&Prime;</th><td class="n">7.1&deg;</td><td class="n">32.0&deg;</td><td class="n">2.32&Prime;</td></tr>
+      <tr><th>8&Prime;</th><td class="n">3.6&deg;</td><td class="n">17.3&deg;</td><td class="n">4.64&Prime;</td></tr>
+      <tr><th>16&Prime;</th><td class="n">1.8&deg;</td><td class="n">8.9&deg;</td><td class="n">9.28&Prime;</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="claim">The difference between a lurching cube and a calm one is <b>32&deg; versus 9&deg;</b>. That's the whole lens.</p>
+
+  <h3>The 8&times;10 adjustment, generalised</h3>
+  <p>VPs don't scale with the page. The cone ties <span class="m">d</span> to your <em>subject</em>, so <span class="m">d &ge; 1.72R</span> and the diagonal VP sits at <span class="m">d</span> — always at least 1.72&times; the subject radius away, no matter how small the paper gets. In a bound book you can't pin off the edge. So:</p>
+  <p class="claim">At sketchbook scale you <b>stop pinning and start setting angles</b>. Slope to the off-plate VP &rarr; arctangent &rarr; the triangle. This is where that tool pays rent.</p>
+  <p>Corollary worth knowing: a construction VP only lands on the plate if the subject radius is under about 58% of the half-width. Push the CV off-centre and you buy room on one side.</p>
+</section>
+
+<!-- ================= 11 CAVEATS ================= -->
+<section class="sec" id="s11" aria-labelledby="h11t">
+  <div class="sec-head"><span class="sec-num">11</span><h2 id="h11t">Caveats &amp; open items</h2></div>
+  <ul>
+    <li><b>Armature is contested history.</b> Hambidge's claim that Greek vases were designed on dynamic symmetry is disputed. Bouleau's readings of the Old Masters are post-hoc — find an armature line near anything if you're willing to look. Treat this as a generator of <em>non-arbitrary</em> choices, not a law of beauty. Its value is that when you place something on an eye, the rectangle can justify the decision. That's all, and it's enough.</li>
+    <li><b>The cone of vision is a guideline you will break on purpose.</b> Dramatic worm's-eye <em>is</em> a cone violation. Breaking it knowingly is a different act from breaking it by accident, and only the second one shows.</li>
+    <li><b>&theta; in §4 is the real incline</b>, not the angle you measure at the near corner of the drawing. Easy to conflate, wrong every time.</li>
+    <li><b>§9 is blank on purpose</b> and will stay wrong until you make the swatches.</li>
+    <li><b>Horizon height and VP spread are independent levers.</b> Height says where the viewer's body is; spread says how close they're standing. You can be a child far away or a giant up close. Decide both.</li>
+  </ul>
+  <p style="color:var(--graphite); font-size:13px; max-width:62ch; margin-top:22px">Leave the last pages of the book blank. The reference entries worth keeping are the ones written after getting burned by something.</p>
+</section>
+
+</main>
+</div>
+
+<footer>
+  <span>PSP-001 &middot; REV 1.0 &middot; PRELIMINARY</span>
+  <span>&sect;9 uncharacterized &mdash; measure before relying on it</span>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------- Fig 1: lens rig ---------- */
+  var SC = 24, CX = 400, CY = 150, EDGE = 3, YT = 0.5, YB = 3.5;
+  var A = EDGE / Math.SQRT2;
+
+  var svgEls = {
+    cube: document.getElementById('r-cube'),
+    rays: document.getElementById('r-rays'),
+    cone: document.getElementById('r-cone'),
+    vpl: document.getElementById('r-vpl'),
+    vpr: document.getElementById('r-vpr'),
+    vplT: document.getElementById('r-vpl-t'),
+    vprT: document.getElementById('r-vpr-t'),
+    coneT: document.getElementById('r-conet')
+  };
+  var out = {
+    sep: document.getElementById('o-sep'),
+    cone: document.getElementById('o-cone'),
+    ext: document.getElementById('o-ext'),
+    stat: document.getElementById('o-stat'),
+    dv: document.getElementById('rig-dv')
+  };
+  var slider = document.getElementById('rig-d');
+
+  function mk(tag, attrs){
+    var e = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+  function line(x1,y1,x2,y2,cls){ return mk('line',{x1:x1,y1:y1,x2:x2,y2:y2,'class':cls}); }
+
+  function solve(d){
+    var pts = { P0:{X:0,Z:d}, P1:{X:A,Z:d+A}, P2:{X:-A,Z:d+A}, P3:{X:0,Z:d+2*A} };
+    var o = {}, ext = 0;
+    for (var k in pts){
+      var X = pts[k].X, Z = pts[k].Z;
+      var ix = d*X/Z, iyt = d*YT/Z, iyb = d*YB/Z;
+      ext = Math.max(ext, Math.hypot(ix,iyt), Math.hypot(ix,iyb));
+      o[k] = { top:[CX+SC*ix, CY+SC*iyt], bot:[CX+SC*ix, CY+SC*iyb] };
+    }
+    o._ext = ext;
+    return o;
+  }
+
+  function draw(d){
+    var p = solve(d);
+    var vpR = CX + SC*d, vpL = CX - SC*d;
+    var coneR = 0.58 * d;
+
+    while (svgEls.cube.firstChild) svgEls.cube.removeChild(svgEls.cube.firstChild);
+    while (svgEls.rays.firstChild) svgEls.rays.removeChild(svgEls.rays.firstChild);
+
+    ['P1','P2'].forEach(function(k){
+      var vp = (k === 'P1') ? vpR : vpL;
+      svgEls.rays.appendChild(line(p.P0.top[0], p.P0.top[1], vp, CY, 'fs-mars-thin'));
+      svgEls.rays.appendChild(line(p.P0.bot[0], p.P0.bot[1], vp, CY, 'fs-mars-thin'));
+    });
+
+    var topFace = mk('path', {
+      'class':'fs-face',
+      d:'M'+p.P0.top[0]+' '+p.P0.top[1]+' L'+p.P1.top[0]+' '+p.P1.top[1]+
+        ' L'+p.P3.top[0]+' '+p.P3.top[1]+' L'+p.P2.top[0]+' '+p.P2.top[1]+' Z'
+    });
+    svgEls.cube.appendChild(topFace);
+
+    // hidden
+    svgEls.cube.appendChild(line(p.P3.top[0],p.P3.top[1],p.P3.bot[0],p.P3.bot[1],'fs-hidden'));
+    svgEls.cube.appendChild(line(p.P1.bot[0],p.P1.bot[1],p.P3.bot[0],p.P3.bot[1],'fs-hidden'));
+    svgEls.cube.appendChild(line(p.P2.bot[0],p.P2.bot[1],p.P3.bot[0],p.P3.bot[1],'fs-hidden'));
+
+    // visible
+    [['P0','P1'],['P0','P2'],['P1','P3'],['P2','P3']].forEach(function(pr){
+      svgEls.cube.appendChild(line(p[pr[0]].top[0],p[pr[0]].top[1],p[pr[1]].top[0],p[pr[1]].top[1],'fs-ink'));
+    });
+    [['P0','P1'],['P0','P2']].forEach(function(pr){
+      svgEls.cube.appendChild(line(p[pr[0]].bot[0],p[pr[0]].bot[1],p[pr[1]].bot[0],p[pr[1]].bot[1],'fs-ink'));
+    });
+    ['P0','P1','P2'].forEach(function(k){
+      svgEls.cube.appendChild(line(p[k].top[0],p[k].top[1],p[k].bot[0],p[k].bot[1],'fs-ink'));
+    });
+
+    svgEls.cone.setAttribute('r', SC*coneR);
+    svgEls.coneT.setAttribute('y', Math.max(14, CY - SC*coneR - 6));
+    svgEls.vpl.setAttribute('cx', vpL);
+    svgEls.vpr.setAttribute('cx', vpR);
+    svgEls.vplT.setAttribute('x', vpL);
+    svgEls.vprT.setAttribute('x', vpR);
+
+    var over = p._ext > coneR;
+    out.sep.textContent = (2*d).toFixed(1) + '\u2033';
+    out.cone.textContent = coneR.toFixed(2) + '\u2033';
+    out.ext.textContent = p._ext.toFixed(2) + '\u2033';
+    out.stat.textContent = over ? 'EXCEEDED' : 'WITHIN';
+    out.stat.className = over ? 'warn' : 'ok';
+    out.dv.textContent = d.toFixed(1) + ' in';
+  }
+
+  slider.addEventListener('input', function(){ draw(parseFloat(slider.value)); });
+  Array.prototype.forEach.call(document.querySelectorAll('.presets button'), function(b){
+    b.addEventListener('click', function(){
+      if (b.disabled) return;
+      slider.value = b.dataset.d;
+      draw(parseFloat(b.dataset.d));
+    });
+  });
+  draw(8);
+
+  /* ---------- Fig 9: armature layers ---------- */
+  Array.prototype.forEach.call(document.querySelectorAll('.toggles button'), function(b){
+    var g = document.getElementById(b.dataset.lay);
+    if (b.getAttribute('aria-pressed') === 'false') g.classList.add('lay-off');
+    b.addEventListener('click', function(){
+      var on = b.getAttribute('aria-pressed') === 'true';
+      b.setAttribute('aria-pressed', String(!on));
+      g.classList.toggle('lay-off', on);
+    });
+  });
+
+  /* ---------- armature calculator ---------- */
+  var cp = document.getElementById('cp'), cq = document.getElementById('cq'), cout = document.getElementById('cout');
+  function gcdish(a,b){ return b < 1e-9 ? a : gcdish(b, a % b); }
+  function calc(){
+    var p = parseFloat(cp.value), q = parseFloat(cq.value);
+    if (!(p > 0) || !(q > 0)) { cout.textContent = 'Enter two positive sides.'; return; }
+    var s = p*p + q*q;
+    var e1 = p*p/s, e2 = q*q/s;
+    var rows = [];
+    rows.push('Eyes at <b>' + e1.toFixed(4) + '</b> and <b>' + e2.toFixed(4) + '</b> of every side.');
+    if (Math.abs(p - Math.round(p)) < 1e-9 && Math.abs(q - Math.round(q)) < 1e-9){
+      var P = Math.round(p), Q = Math.round(q), g = gcdish(P*P+Q*Q, P*P) || 1;
+      rows.push('Exact: <b>' + (P*P/g) + '/' + ((P*P+Q*Q)/g) + '</b> and <b>' + (Q*Q/g) + '/' + ((P*P+Q*Q)/g) + '</b>.');
+    }
+    var ratio = Math.max(p,q)/Math.min(p,q);
+    rows.push('Proportion ' + ratio.toFixed(4) + ' : 1. Reciprocal = ' + Math.min(p,q).toFixed(3) + ' \u00d7 ' + (Math.min(p,q)/ratio).toFixed(3) + '.');
+    var rab = Math.min(p,q)/Math.max(p,q);
+    rows.push('Rabatment lines at ' + rab.toFixed(4) + ' and ' + (1-rab).toFixed(4) + ' of the long side.');
+    var third = Math.abs(rab - 1/3) < 5e-4 || Math.abs(rab - 2/3) < 5e-4;
+    rows.push(third
+      ? '&rarr; Rabatment coincides with the thirds. This is why the rule of thirds appears to work here.'
+      : '&rarr; Rabatment does <b>not</b> land on the thirds. The rule of thirds is wrong for this rectangle.');
+    var miss = Math.min(Math.abs(e1 - 1/3), Math.abs(e1 - 2/3));
+    rows.push('Eyes miss the thirds by ' + miss.toFixed(4) + ' of the side.');
+    cout.innerHTML = rows.join('<br>');
+  }
+  cp.addEventListener('input', calc);
+  cq.addEventListener('input', calc);
+  calc();
+})();
+</script>
+</body>
+</html>
