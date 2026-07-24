@@ -1,0 +1,11 @@
+# DNS/deploy pending — the URL is set, the domain isn't live yet (plan D9).
+baseURL = "https://refs.threelakes.music/"
+locale = "en-US"
+title = "Three Lakes References"
+
+[taxonomies]
+tag = "tags"
+
+[markup.goldmark.renderer]
+# Raw HTML passthrough in Markdown — the author is trusted (plan D2).
+unsafe = true

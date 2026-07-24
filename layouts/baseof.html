@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
+{{- $css := slice
+      (resources.Get "css/tokens.css")
+      (resources.Get "css/fonts.css")
+      (resources.Get "css/roles.css")
+      (resources.Get "css/site.css")
+    | resources.Concat "css/bundle.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}">
+</head>
+<body>
+<header class="masthead">
+  <a class="mast-home" href="{{ site.Home.RelPermalink }}">3L·REFS</a>
+  <span class="mast-sub">Three Lakes — reference sheets</span>
+</header>
+<main>
+{{ block "main" . }}{{ end }}
+</main>
+<footer class="colophon">
+  <span>threelakes.music</span>
+</footer>
+</body>
+</html>

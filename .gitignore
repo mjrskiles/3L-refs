@@ -1,0 +1,18 @@
+# hugo
+/public/
+/resources/_gen/
+.hugo_build.lock
+
+# project-local toolchain (never system-installed)
+/bin/
+/.venv/
+/.uv/
+
+# python
+figures/.venv/
+__pycache__/
+.pytest_cache/
+.hypothesis/
+
+# macos
+.DS_Store

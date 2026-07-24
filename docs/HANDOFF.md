@@ -1,5 +1,11 @@
 # sbl-refs — Agent Handoff & Execution Plan
 
+> **Historical document — superseded in part.** Read
+> [`IMPLEMENTATION-PLAN.md`](IMPLEMENTATION-PLAN.md) first; where the two conflict,
+> the plan wins. Since this was written the project was rebranded: **Three Lakes**,
+> site at `refs.threelakes.music`, repo `3L-refs`. Substitute accordingly — the
+> architecture, locked decisions, and defect list below all still stand.
+
 **Read this first. It is self-contained: it assumes no prior conversation.**
 
 You are picking up a greenfield project. This directory (`sbl-refs/`) is the seed

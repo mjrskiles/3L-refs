@@ -1,0 +1,15 @@
+{{- /* {{< v "dotted.path" >}} — inlines a computed number from data/computed/<ref>.json.
+     No literal numbers in prose (plan D2 / brief §6). */ -}}
+{{- $ref := .Page.File.ContentBaseName -}}
+{{- $key := .Get 0 -}}
+{{- $cur := index hugo.Data.computed $ref -}}
+{{- if not $cur -}}
+  {{- errorf "v: no computed data for ref %q (page %s)" $ref .Page.File.Path -}}
+{{- end -}}
+{{- range split $key "." -}}
+  {{- if $cur -}}{{- $cur = index $cur . -}}{{- end -}}
+{{- end -}}
+{{- if eq $cur nil -}}
+  {{- errorf "v: key %q not found in computed data for ref %q" $key $ref -}}
+{{- end -}}
+{{- $cur -}}

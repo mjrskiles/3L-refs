@@ -1,0 +1,14 @@
+# Tag registry (plan D5). Every tag used in content frontmatter must exist here —
+# CI enforces it (tools/check_tags.py). Adding a tag means writing its charter.
+composition:
+  name: Composition
+  charter: Arranging a picture — armatures, structural lines, where things go and why.
+curves:
+  name: Curves
+  charter: Named curves and their mathematics — spirals, conics, parametric families.
+visual-art:
+  name: Visual art
+  charter: The visual-art side of the site — drawing, painting, printmaking topics.
+drawing:
+  name: Drawing
+  charter: Pen, pencil, and paper practice — tools, constructions, bench technique.

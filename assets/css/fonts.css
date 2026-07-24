@@ -1,0 +1,30 @@
+/* Self-hosted, subset IBM Plex (OFL). Generated into static/fonts/ by
+   tools/subset_fonts.py — no external font origins, ever. */
+@font-face{
+  font-family:'IBM Plex Sans';font-style:normal;font-weight:400;font-display:swap;
+  src:url('/fonts/IBMPlexSans-Regular.woff2') format('woff2');
+}
+@font-face{
+  font-family:'IBM Plex Sans';font-style:normal;font-weight:600;font-display:swap;
+  src:url('/fonts/IBMPlexSans-SemiBold.woff2') format('woff2');
+}
+@font-face{
+  font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:600;font-display:swap;
+  src:url('/fonts/IBMPlexSansCondensed-SemiBold.woff2') format('woff2');
+}
+@font-face{
+  font-family:'IBM Plex Sans Condensed';font-style:normal;font-weight:700;font-display:swap;
+  src:url('/fonts/IBMPlexSansCondensed-Bold.woff2') format('woff2');
+}
+@font-face{
+  font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;
+  src:url('/fonts/IBMPlexMono-Regular.woff2') format('woff2');
+}
+@font-face{
+  font-family:'IBM Plex Mono';font-style:normal;font-weight:600;font-display:swap;
+  src:url('/fonts/IBMPlexMono-SemiBold.woff2') format('woff2');
+}
+@font-face{
+  font-family:'IBM Plex Serif';font-style:italic;font-weight:400;font-display:swap;
+  src:url('/fonts/IBMPlexSerif-Italic.woff2') format('woff2');
+}

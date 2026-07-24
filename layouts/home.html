@@ -1,0 +1,10 @@
+{{ define "main" }}
+{{ .Content }}
+<div class="tiles">
+  {{ range site.RegularPages.ByTitle }}
+    {{ partial "tile.html" . }}
+  {{ else }}
+    <p class="empty">No references yet.</p>
+  {{ end }}
+</div>
+{{ end }}

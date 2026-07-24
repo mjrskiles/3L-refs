@@ -1,0 +1,22 @@
+<article class="tile">
+  <a class="tile-link" href="{{ .RelPermalink }}">
+    {{- $ref := "" -}}
+    {{- with .File }}{{ $ref = .ContentBaseName }}{{ end -}}
+    {{- if $ref -}}
+      {{- with .Params.thumbnail -}}
+        {{- $thumb := printf "figures/%s/%s.svg" $ref . -}}
+        {{- if templates.Exists (printf "_partials/%s" $thumb) -}}
+          <div class="tile-thumb">{{ partial $thumb $ }}</div>
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+    <h2 class="tile-title">{{ .Title }}</h2>
+  </a>
+  <div class="tile-meta">
+    {{- $status := .Params.status | default "draft" -}}
+    <span class="chip chip-{{ $status }}">{{ $status | upper }}</span>
+    {{- range .GetTerms "tags" }}
+    <a class="tag" href="{{ .RelPermalink }}">{{ partial "tag-name.html" . }}</a>
+    {{- end }}
+  </div>
+</article>

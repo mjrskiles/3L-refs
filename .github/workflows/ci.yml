@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Sync Python env
+        working-directory: figures
+        run: uv sync --locked
+
+      - name: Tests
+        working-directory: figures
+        run: uv run pytest -q
+
+      # Same fetcher the dev machines use — one pin (tools/get_hugo.sh), and the
+      # Linux tarball path stays continuously exercised for the Raspberry Pi.
+      - name: Setup Hugo
+        run: tools/get_hugo.sh
+
+      - name: Build site
+        run: bin/hugo --gc --minify
+
+      - name: No external origins
+        working-directory: figures
+        run: uv run python ../tools/check_origins.py ../public
+
+      - name: Tags registered
+        working-directory: figures
+        run: uv run python ../tools/check_tags.py ..

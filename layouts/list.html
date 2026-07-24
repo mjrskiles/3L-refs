@@ -1,0 +1,22 @@
+{{ define "main" }}
+<h1 class="list-title">{{ if eq .Kind "term" }}{{ partial "tag-name.html" . }}{{ else }}{{ .Title }}{{ end }}</h1>
+{{ with .Data.Term }}
+  {{ with index hugo.Data.tags . }}<p class="list-charter">{{ .charter }}</p>{{ end }}
+{{ end }}
+{{ .Content }}
+{{ if eq .Kind "taxonomy" }}
+<ul class="term-list">
+  {{ range .Pages.ByTitle }}
+  <li><a class="tag" href="{{ .RelPermalink }}">{{ partial "tag-name.html" . }}</a></li>
+  {{ end }}
+</ul>
+{{ else }}
+<div class="tiles">
+  {{ range .Pages.ByTitle }}
+    {{ partial "tile.html" . }}
+  {{ else }}
+    <p class="empty">Nothing here yet.</p>
+  {{ end }}
+</div>
+{{ end }}
+{{ end }}
