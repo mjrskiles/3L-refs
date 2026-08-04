@@ -5,9 +5,15 @@ Markup of Rev 0.1 is folded in; §6 records the resolutions (R1–R5). Where thi
 and the handoff conflict, this plan wins.
 
 **Rev 1.1 changes (2026-07-24):** first concept is **rectangle armature**, not spirals
-(§4 P2; spirals moves to the P3 queue) · rebrand to **Three Lakes**, site at
-`refs.threelakes.music` · repo renamed **3L-refs**, hosted personally for now (D9) ·
-development is **cross-platform** — macOS and Raspberry Pi 5 / arm64 Linux (D14).
+(§4 P2; spirals moves to the P3 queue) · rebrand to **Three Lakes** · repo renamed
+**3L-refs**, hosted personally for now (D9) · development is **cross-platform** —
+macOS and Raspberry Pi 5 / arm64 Linux (D14).
+
+**Rev 1.2 changes (2026-08-02):** the site is **one site at the apex**,
+`threelakesmusic.com`, with refs under `/refs/` — supersedes D4's flat namespace and
+D9's `refs.` subdomain (see D15) · `.music` dropped as a restricted TLD · a **wiki
+layer** is adopted as a second content type alongside refs (D16) · near-term priority
+is a **landing page**, ahead of any ref (§4 P0.5).
 
 ---
 
@@ -46,9 +52,11 @@ import boundary enforced by a failing build.
 - **D3. Page-or-card.** Whole-page layout now. A future card partial renders
   metadata + thumbnail from the same bundle; mix-and-match composition on listing
   pages later. No authoring change when that arrives.
-- **D4. No hierarchy in URLs.** Refs live at `refs.threelakes.music/<slug>/`.
-  Subject areas, document kinds, and themes are **tags**, not path segments.
-  Document identity (PSP-001 etc.) lives in frontmatter, never the URL.
+- **D4. No hierarchy in URLs.** ~~Refs live at `refs.threelakes.music/<slug>/`.~~
+  **Superseded by D15** — refs live at `threelakesmusic.com/refs/<slug>/`. The
+  principle survives inside that namespace: subject areas, document kinds, and themes
+  are **tags**, not path segments, and document identity (PSP-001 etc.) lives in
+  frontmatter, never the URL. `/refs/` is a content-type boundary, not a taxonomy.
 - **D5. Tag registry.** `data/tags.yaml`: every tag has slug, display name, one-line
   charter. CI fails on unregistered tags. Starter vocabulary (R2): `composition`,
   `curves`, `visual-art`, `drawing`.
@@ -68,9 +76,38 @@ import boundary enforced by a failing build.
   `pypdf` as build-only deps for the print target).
 - **D9. Repo and domain.** This checkout is the project, renamed **`3L-refs`** and
   pushed to `git@github.com:mjrskiles/3L-refs.git` (personal account while the Three
-  Lakes org is sorted; the remote can move later without touching the tree). Site
-  URL is `https://refs.threelakes.music/` — set in config now, DNS/CNAME/Pages deploy
-  deferred until it's live. CI builds from day one; the deploy job lands on DNS day.
+  Lakes org is sorted; the remote can move later without touching the tree). Site URL
+  is `https://threelakesmusic.com/` per D15. The repo name still says "refs" and is
+  now narrower than the site; renaming it is cosmetic and deferred.
+- **D15. One site at the apex.** `threelakesmusic.com` serves everything: the landing
+  page at `/`, reference sheets at `/refs/<slug>/`, wiki concept nodes at `/c/<slug>/`
+  (D16), tag pages at `/tags/<slug>/`. Not a `refs.` subdomain — the site is an
+  umbrella (who I am, Sound Byte Labs, instruments, reference material), and splitting
+  it would mean two repos, two CI configs, two deploys, and a duplicated token set,
+  while making links between the wiki and the rest cross-origin.
+  - **Staging:** the Pages project URL `mjrskiles.github.io/3L-refs/` until DNS
+    resolves. CI derives `baseURL` from `actions/configure-pages`, so the cutover is a
+    repo setting, not a commit. **Asset URLs must survive a subpath** — use `relURL`/
+    `relref` in templates and *relative* `url()` in CSS, never root-absolute.
+  - **No `CNAME` file until DNS resolves.** With one present, Pages redirects the
+    working `.io` URL to a dead host and the site is unreachable from anywhere.
+
+- **D16. Wiki layer alongside refs.** Two content types, deliberately different:
+  refs are few, large, and finished; wiki nodes are many, small, and permanently
+  partial. A concept like the log spiral is load-bearing in armature, spirals, and eye
+  path — refs-only forces either triplicated definitions or fragile deep links into
+  section anchors. A node gives it one address.
+  - **Static, not an engine.** Authoring stays git + editor, so no server, no DB, and
+    D7's "no dynamic serving" holds. The `[[wikilink]]` syntax keeps the content
+    directory Obsidian-compatible.
+  - **Backlinks are generated, not templated.** Hugo cannot index link targets; the
+    Python generator walks content and emits a link graph to `data/`, and a dumb
+    partial renders "what links here." Same division of labor as D7.
+  - **`data/tags.yaml` is the seed.** A tag already carries a slug, a display name, and
+    a charter, and its term page already renders name + definition + inbound refs —
+    structurally a concept node. Nodes grow out of the registry rather than replacing
+    it, so nothing built in P0 is thrown away.
+
 - **D14. Cross-platform development.** The same checkout must work on macOS and on
   a Raspberry Pi 5 (arm64 Linux). Toolchain fetchers detect OS/arch; nothing is
   installed system-wide (`tools/get_hugo.sh` handles darwin-universal `.pkg` and
@@ -107,10 +144,13 @@ import boundary enforced by a failing build.
 
 ```
 3L-refs/
-├── hugo.toml                 # baseURL refs.threelakes.music; taxonomies: tags
+├── hugo.toml                 # baseURL threelakesmusic.com; taxonomies: tags
 ├── content/
-│   ├── _index.md             # landing (tiled list)
-│   └── armature/index.md     # first ref (P2)
+│   ├── _index.md             # landing page (D15)
+│   ├── refs/
+│   │   ├── _index.md         # refs index (tiled list)
+│   │   └── armature/index.md # first ref (P2)
+│   └── c/                    # wiki concept nodes (D16, later)
 ├── data/
 │   ├── tags.yaml             # tag registry (D5)
 │   └── computed/             # per-ref computed.json emitted by generator
@@ -135,7 +175,7 @@ import boundary enforced by a failing build.
 └── .github/workflows/ci.yml  # test → generate → drift → hugo build → origin check
 ```
 
-Naming note: generated figure SVGs land under `layouts/partials/figures/<ref>/`
+Naming note: generated figure SVGs land under `layouts/_partials/figures/<ref>/`
 (inlined by the `fig` shortcode); print sheets under `static/print/<ref>/` (R5).
 
 ---
@@ -161,6 +201,21 @@ Each phase ends green (CI passing). Feature branch per phase.
 - [x] `{{< fig >}}` / `{{< v >}}` shortcode stubs that fail loudly until fed
 
 **Ended when:** empty-but-real site built green locally (`make check`); conventions in place.
+
+### P0.5 — Landing page + deploy ✅ complete (2026-08-02)
+
+Inserted ahead of P1: a live site is needed for the Asheville trip (~2026-08-16),
+and none of it depends on the figure pipeline.
+
+- [x] Apex restructure per D15 — landing at `/`, refs under `/refs/`
+- [x] Landing page: intro, Sound Byte Labs, instruments, reference sheets, contact
+- [x] P0 defect fixes (relative font `url()`, `--cleanDestinationDir`, `lang` from
+      config, protocol-relative origins, `status: draft` ⇒ `draft: true` enforced)
+- [x] Pages deploy job on `main`, `baseURL` derived from `configure-pages`
+- [ ] **DNS** — apex records for `threelakesmusic.com`, then set the custom domain in
+      repo Pages settings. Not code; the long pole. Cert issuance can take 24h.
+
+**Ends when:** the landing page is live, first on the `.io` URL, then on the domain.
 
 ### P1 — Scene, render, workbench
 
@@ -255,3 +310,19 @@ legible · contrast passes · snapshots current · drift check green.
 
 - **OPEN-6 — P2b printable armature sheets:** in scope for the armature ref, or
   deferred to the spirals ref? Decide at P2 start.
+
+- **OPEN-7 — lab notebook.** Raised 2026-08-02, deliberately *not* decided. Two
+  separate needs were conflated here, and they have different answers:
+  1. **A tool for working math out interactively** (Jupyter). A tooling detail, not
+     an architecture question — answerable in an afternoon whenever a derivation
+     actually gets hard. If adopted: notebooks import `kernel/`, never define math;
+     jupytext-paired so `.py` is committed and `.ipynb` is ignored; its own
+     dependency group so CI never installs it. **Skipped for now.**
+  2. **A place to keep a chronological record** — a fourth content type (`log`),
+     organized by time rather than topic, where being dated and provisionally wrong
+     is the point. This needs no Jupyter at all; most lab-log entries are prose, a
+     number, and a photo. It sits beside refs (canonical) and wiki nodes (topical,
+     D16), and material migrates: log → wiki node → ref section.
+
+  Decide (2) with the D16 wiki work after the Asheville trip. (1) can wait for a
+  concrete need.

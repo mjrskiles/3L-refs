@@ -4,8 +4,10 @@ html{-webkit-text-size-adjust:100%}
 body{
   margin:0;background:var(--paper);color:var(--ink);
   font-family:var(--f-body);font-size:15px;line-height:1.62;
-  font-feature-settings:"tnum" 1;
 }
+/* No `font-feature-settings:"tnum"` — IBM Plex ships no tnum feature because its
+   figures are tabular by default (all digits 600 units). The declaration the
+   datasheet carried was inert; columns already align without it. */
 a{color:var(--mars)}
 a:focus-visible{outline:2px solid var(--mars);outline-offset:2px}
 
@@ -76,6 +78,24 @@ figure.fig figcaption{
   font-family:var(--f-mono);font-size:11px;color:var(--graphite);line-height:1.5;
   border-top:1px solid var(--rule);margin-top:10px;padding:8px 0;
 }
+
+/* landing page */
+.landing{max-width:68ch}
+.landing > p:first-of-type{
+  font-family:var(--f-claim);font-style:italic;
+  font-size:19px;line-height:1.5;color:var(--ink);
+  margin:0 0 1.4em;padding-bottom:1.1em;border-bottom:1px solid var(--rule);
+}
+.landing p{margin:0 0 .95em}
+.landing h2{
+  font-family:var(--f-disp);font-weight:700;text-transform:uppercase;
+  font-size:19px;letter-spacing:.02em;line-height:1.1;
+  margin:2.2em 0 .1em;padding-top:.55em;border-top:1.5px solid var(--ink);
+}
+/* Section rule spans the text measure; the label sits under it, datasheet-style. */
+.landing h2 + p{margin-top:.75em}
+.landing strong{font-family:var(--f-mono);font-size:.82em;font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--graphite)}
 
 /* term/list pages */
 .list-title{

@@ -1,28 +1,31 @@
 # 3L-refs
 
-Three Lakes' static **reference site** — to be served at
-**https://refs.threelakes.music** (DNS/deploy pending).
+The **Three Lakes Music** site — landing page, reference sheets, and (later) a wiki
+layer. Served at **https://threelakesmusic.com** once DNS lands; until then at the
+GitHub Pages project URL.
 
-Working reference sheets for art and music engineering topics. Built with
-[Hugo](https://gohugo.io/), light "engineering-paper" theme, self-hosted fonts,
-no external runtime origins. Figures are generated at build time from a tested
+Built with [Hugo](https://gohugo.io/), light "engineering-paper" theme, self-hosted
+fonts, no external runtime origins. Figures are generated at build time from a tested
 Python math kernel — no hand-placed coordinates.
+
+The repo name predates the site's scope (plan D9): it holds the whole site now, not
+just the refs.
 
 ## Status
 
-Scaffolded (plan phase P0). First ref in progress: **Rectangle Armature** —
-diagonals, eyes, reciprocals, rabatment, and the nesting sequence whose pole is
-the eye.
+Landing page built and deploying (plan phase P0.5); **DNS is the open item.** First
+ref in progress: **Rectangle Armature** — diagonals, eyes, reciprocals, rabatment, and
+the nesting sequence whose pole is the eye.
 
 **Start here:** [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) —
-the settled plan (Rev 1.1). Background: [`docs/HANDOFF.md`](docs/HANDOFF.md) and
+the settled plan (Rev 1.2). Background: [`docs/HANDOFF.md`](docs/HANDOFF.md) and
 [`docs/PSP-001-brief.md`](docs/PSP-001-brief.md), both predating the rebrand and
 amended by the plan.
 
 ## Layout
 
 ```
-content/          # one page bundle per ref (Markdown + shortcodes)
+content/          # _index.md (landing) · refs/<slug>/ (page bundle per ref)
 data/             # tags.yaml registry + computed/ (generator-emitted numbers)
 assets/css/       # tokens (single source of color), role map, site chrome
 static/fonts/     # self-hosted subset IBM Plex (tools/subset_fonts.py)

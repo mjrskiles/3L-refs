@@ -12,19 +12,24 @@ import re
 import sys
 from pathlib import Path
 
-ALLOWED_DEFAULT = {"refs.threelakes.music"}
+ALLOWED_DEFAULT = {"threelakesmusic.com", "www.threelakesmusic.com", "mjrskiles.github.io"}
+
+# (?:https?:)?// also catches protocol-relative URLs — //fonts.googleapis.com/... is
+# every bit as much a third-party fetch as the https:// form.
+URL = r"""(?:https?:)?//[^"')\s]+"""
 
 FETCH_ATTR = re.compile(
-    r"""(?:href|src|srcset|action|poster|data)\s*=\s*["'](https?://[^"']+)""",
+    rf"""(?:\s|^)(?:href|src|srcset|action|poster|data)\s*=\s*["']({URL})""",
     re.IGNORECASE,
 )
-CSS_URL = re.compile(r"""url\(\s*["']?(https?://[^"')]+)""", re.IGNORECASE)
-CSS_IMPORT = re.compile(r"""@import\s+["'](https?://[^"']+)""", re.IGNORECASE)
+CSS_URL = re.compile(rf"""url\(\s*["']?({URL})""", re.IGNORECASE)
+CSS_IMPORT = re.compile(rf"""@import\s+["']({URL})""", re.IGNORECASE)
 
 SCAN_SUFFIXES = {".html", ".css", ".js", ".svg", ".xml"}
 
 
 def host_of(url: str) -> str:
+    """Host of an absolute or protocol-relative URL."""
     return url.split("//", 1)[1].split("/", 1)[0].split(":", 1)[0].lower()
 
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ site.Language.Locale | default site.Language.Lang }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,14 +14,14 @@
 </head>
 <body>
 <header class="masthead">
-  <a class="mast-home" href="{{ site.Home.RelPermalink }}">3L·REFS</a>
-  <span class="mast-sub">Three Lakes — reference sheets</span>
+  <a class="mast-home" href="{{ site.Home.RelPermalink }}">THREE&nbsp;LAKES&nbsp;MUSIC</a>
+  <span class="mast-sub">instruments · firmware · reference</span>
 </header>
 <main>
 {{ block "main" . }}{{ end }}
 </main>
 <footer class="colophon">
-  <span>threelakes.music</span>
+  <span>threelakesmusic.com</span>
 </footer>
 </body>
 </html>

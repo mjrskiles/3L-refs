@@ -47,6 +47,15 @@ def main() -> int:
         if status is not None and status not in VALID_STATUS:
             errors.append(f"{rel}: invalid status {status!r} (allowed: {sorted(VALID_STATUS)})")
 
+        # `status` is our vocabulary; `draft` is Hugo's. Only `draft: true` actually
+        # withholds a page from a production build, so a status:draft ref would
+        # otherwise ship. Plan D1 says drafts live in the repo unshipped — enforce it.
+        if status == "draft" and fm.get("draft") is not True:
+            errors.append(
+                f"{rel}: status: draft requires `draft: true` as well, or the page "
+                f"ships in a production build"
+            )
+
     if errors:
         print(f"TAG CHECK FAILED ({len(errors)}):")
         for e in errors:

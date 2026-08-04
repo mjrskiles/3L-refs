@@ -7,6 +7,7 @@ woff2. Run rarely (make fonts); outputs are committed.
 """
 import io
 import sys
+import tempfile
 import urllib.parse
 import urllib.request
 import zipfile
@@ -28,6 +29,12 @@ PINNED = {
 # Latin + Latin ext, Greek (φ θ ψ π), punctuation, sub/superscripts (₀₂₃),
 # arrows (→ ⇒ ↑), math operators (≤ √ ∞ −), geometric shapes (▸), dingbats (✗)
 UNICODES = "U+0000-024F,U+0370-03FF,U+2000-206F,U+2070-209F,U+2190-21FF,U+2200-22FF,U+25A0-25FF,U+2700-27BF"
+
+# No --layout-features override: IBM Plex has no `tnum` feature because its
+# default figures are already tabular (every digit is 600 units). Asking for
+# tnum would retain a feature that does not exist. If a future family needs an
+# opt-in feature, add it with '+=' — a plain '=' REPLACES the default set and
+# would silently drop kerning and ligatures.
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "static" / "fonts"
@@ -65,20 +72,22 @@ def main() -> int:
             if not match:
                 print(f"  ERROR: {ttf} not found in {tag} zip", file=sys.stderr)
                 return 1
-            src = OUT / ttf
-            src.write_bytes(zf.read(match[0]))
-            dest = OUT / ttf.replace(".ttf", ".woff2")
-            pyftsubset(
-                [
-                    str(src),
-                    f"--unicodes={UNICODES}",
-                    "--flavor=woff2",
-                    "--no-hinting",
-                    "--desubroutinize",
-                    f"--output-file={dest}",
-                ]
-            )
-            src.unlink()
+            # Stage the TTF in a temp dir, never in static/fonts/ — a failure
+            # mid-subset would otherwise leave a stray 200KB TTF in shipped output.
+            with tempfile.TemporaryDirectory() as tmp:
+                src = Path(tmp) / ttf
+                src.write_bytes(zf.read(match[0]))
+                dest = OUT / ttf.replace(".ttf", ".woff2")
+                pyftsubset(
+                    [
+                        str(src),
+                        f"--unicodes={UNICODES}",
+                        "--flavor=woff2",
+                        "--no-hinting",
+                        "--desubroutinize",
+                        f"--output-file={dest}",
+                    ]
+                )
             print(f"  {dest.relative_to(ROOT)}  {dest.stat().st_size // 1024} KB")
     return 0
 

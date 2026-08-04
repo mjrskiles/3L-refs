@@ -1,6 +1,7 @@
 ---
 title: Rectangle Armature
 status: draft
+draft: true
 tags: [composition, drawing, visual-art]
 ---
 

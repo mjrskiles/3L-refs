@@ -2,7 +2,7 @@
 
 **Rev 2.0** — supersedes Rev 1.0. Changes: content expansion is now in scope (§9), and it is what drives the reuse architecture rather than competing with it.
 
-**Target:** move `perspective-datasheet.html` into the SBL Hugo site as a generated, tested, themed document — expand it past pure perspective — and fall out of it with a reusable figure-rendering library.
+**Target:** move `perspective-datasheet.html` into the `3L-refs` Hugo site as a generated, tested, themed document — expand it past pure perspective — and fall out of it with a reusable figure-rendering library.
 
 **Input artifact:** the single-file `perspective-datasheet.html`. Read it first, in full. It is correct and it works; this is a refactor, not a rewrite.
 
@@ -11,7 +11,7 @@
 ## 0. Read before starting
 
 1. `perspective-datasheet.html` — the current artifact.
-2. The SBL Hugo theme — **the palette is not in this brief on purpose.** Find the real tokens in the repo (`assets/css/`, `data/`, theme config, wherever they live) and use those. Do not invent brand colors.
+2. Its `:root` block — **that is the palette.** The site is greenfield and all-light, so there is no existing theme to pull tokens from and nothing to reconcile against. Lift the light token set from the artifact (`--paper`, `--plate`, `--ink`, `--graphite`, `--mars`, `--con`, …) and map it to the L2 roles in §4. You are the source of truth for it. Do not invent new hues.
 3. §11 of the artifact — the caveats section already flags what's uncertain.
 
 ---
@@ -21,7 +21,7 @@
 1. **No hardcoded geometry.** Every coordinate in every figure is currently a constant computed by hand. Replace with real math, executed at build time. Accept build/CI complexity to get this.
 2. **Modular figure rendering.** The scene and render layers must be domain-agnostic — reusable for an audio/DSP version of this document with zero changes.
 3. **Expand past perspective** into edges, notan, gestalt, and eye path (§9). The document currently covers geometry and calls itself a drawing reference; that's a gap.
-4. **SBL theming**, subject to hard readability floors (§8).
+4. **Coherent light theming**, subject to hard readability floors (§8).
 5. **Prose register:** approachable technical reference. Textbook, not essay (§7).
 
 ## 2. Non-goals
@@ -271,9 +271,9 @@ Concreteness stays. Performance goes.
 
 ---
 
-## 8. SBL theming — constraints, not colors
+## 8. Theming — constraints, not colors
 
-Pull real tokens from the theme in the repo. Map them to L2 roles. **The role → token map is the only place color appears.**
+Take the light tokens from the artifact's `:root` block (§0.2). Map them to L2 roles. **The role → token map is the only place color appears.**
 
 ### Hard floors
 
@@ -287,14 +287,14 @@ Pull real tokens from the theme in the repo. Map them to L2 roles. **The role �
 
 > Roles must be distinguishable **without color** — stroke weight and dash pattern alone.
 
-Print a figure in grayscale. If construction isn't distinguishable from subject, it fails regardless of contrast numbers. Buys accessibility, print fidelity, and freedom to use whatever the SBL palette turns out to be — because color becomes redundant rather than load-bearing.
+Print a figure in grayscale. If construction isn't distinguishable from subject, it fails regardless of contrast numbers. Buys accessibility, print fidelity, and freedom to change the palette later — because color becomes redundant rather than load-bearing.
 
 **Note for §9.2:** the edge-profile figures are *about* value. They must not rely on hue at all; they're the strictest case of this rule in the document.
 
 ### Additional
 
 - **At most two accent hues in figures.**
-- If a role has no SBL equivalent, **derive** it (desaturate/lighten an existing token). Don't import a foreign hue.
+- If a role has no token equivalent, **derive** it (desaturate/lighten an existing token). Don't import a foreign hue.
 - Readability wins every conflict with brand.
 
 ### Fonts
@@ -477,7 +477,7 @@ Correctness first, appearance last. Each phase ends green.
 | P5 | **`plot` + `link` primitives**, driven by edge-profile and elements-graph | Both live in `scene/`, not `figures/` |
 | P6 | `kernel/tone/` + new content sections + tier metadata | §9 complete |
 | P7 | Hugo integration, data extraction, `{{< v >}}` | No literal numbers in content |
-| P8 | SBL theme swap | Contrast + grayscale pass |
+| P8 | Light theme finalize | Contrast + grayscale pass |
 | P9 | Prose pass (§7) | — can run parallel with P2–P8 |
 | P10 | Audio smoke test + document archetype | `scene/`+`render/` untouched by it |
 

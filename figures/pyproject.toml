@@ -1,7 +1,7 @@
 [project]
-name = "sbl-figures"
+name = "threelakes-figures"
 version = "0.1.0"
-description = "Build-time figure generator for refs.threelakes.music (never shipped)"
+description = "Build-time figure generator for threelakesmusic.com (never shipped)"
 requires-python = ">=3.12"
 dependencies = []
 
