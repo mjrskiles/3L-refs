@@ -1,54 +1,60 @@
-# sbl-refs
+# 3L-refs
 
-Sound Byte Labs' static **reference / datasheet site** — served at
-**https://refs.soundbytelabs.net**.
+The **Three Lakes Arts** site — landing page, reference sheets, and (later) a wiki
+layer. Served at **https://threelakesarts.com** once DNS lands; until then at the
+GitHub Pages project URL.
 
-Built with [Hugo](https://gohugo.io/), deployed via GitHub Pages. Light theme,
-self-hosted fonts, no external runtime origins. Figures are generated from a Python
-math kernel at build time (no hand-placed coordinates).
+Built with [Hugo](https://gohugo.io/), light "engineering-paper" theme, self-hosted
+fonts, no external runtime origins. Figures are generated at build time from a tested
+Python math kernel — no hand-placed coordinates.
 
-Its first document is **PSP-001 — Perspective & Composition**, a working datasheet of
-constructions, constants, and pass criteria for pen-and-ink and colored-pencil
-drawing.
+The repo name predates the site's scope (plan D9): it holds the whole site now, not
+just the refs.
 
 ## Status
 
-Bootstrapping. This repo was split out of `soundbytelabs/blog` after an evaluation.
-**If you are an agent or contributor starting here, read [`docs/HANDOFF.md`](docs/HANDOFF.md) first** —
-it is the self-contained plan, decision record, and phase roadmap.
+Landing page built and deploying (plan phase P0.5); **DNS is the open item.** First
+ref in progress: **Rectangle Armature** — diagonals, eyes, reciprocals, rabatment, and
+the nesting sequence whose pole is the eye.
 
-## Layout (target)
+**Start here:** [`docs/IMPLEMENTATION-PLAN.md`](docs/IMPLEMENTATION-PLAN.md) —
+the settled plan (Rev 1.2). Background: [`docs/HANDOFF.md`](docs/HANDOFF.md) and
+[`docs/PSP-001-brief.md`](docs/PSP-001-brief.md), both predating the rebrand and
+amended by the plan.
+
+## Layout
 
 ```
-content/psp/     # datasheet content (Markdown + shortcodes)
-data/psp/        # extracted tables + computed numbers
-assets/css/      # light token set + role→token map
-static/fonts/    # self-hosted, subset IBM Plex
-layouts/psp/     # document shell (masthead, TOC, tier chrome) + generated figures
-figures/         # Python figure generator (build-time only; not shipped)
-tools/           # CI checks (contrast, no-external-origins, import-boundary, drift)
-docs/            # handoff, brief, evaluation
-source/          # the original single-file artifact, for reference
+content/          # _index.md (landing) · refs/<slug>/ (page bundle per ref)
+data/             # tags.yaml registry + computed/ (generator-emitted numbers)
+assets/css/       # tokens (single source of color), role map, site chrome
+static/fonts/     # self-hosted subset IBM Plex (tools/subset_fonts.py)
+static/print/     # generated print-true PDFs (when a ref needs them)
+layouts/          # shell, tiles, fig/v shortcodes; _partials/figures/ (generated SVGs)
+figures/          # Python figure generator — build-time only, never shipped
+tools/            # toolchain fetchers + CI checks (origins, tags, imports, contrast, drift)
+docs/             # plan, handoff, brief; misc/ (spiral tool, for a later ref)
+source/           # the original PSP-001 datasheet artifact, verified reference
 ```
 
 ## Local development
 
+Everything is project-local — no system installs. Tooling lives in `.venv/`,
+`bin/`, and `.uv/` (all gitignored, all disposable). Works on macOS and on
+Linux/arm64 (Raspberry Pi 5).
+
 ```bash
-# Generate figures (writes SVGs + computed.json into the Hugo tree)
-python figures/generate.py
-
-# Run the site
-hugo server
-
-# Build
-hugo --gc --minify
+make setup    # bootstrap: venv + uv, pinned Hugo into ./bin, python deps
+make serve    # hugo server -D (drafts visible)
+make test     # pytest (figure kernel)
+make check    # build + tests + origin/tag checks (what CI runs)
+make build    # production build into public/
+make fonts    # regenerate subset fonts (rarely needed)
 ```
 
-## Deployment
-
-GitHub Pages, custom domain `refs.soundbytelabs.net` (`CNAME`). One repo → one domain.
-The `blog.soundbytelabs.net` site is a separate repo (`soundbytelabs/blog`) and is
-unaffected.
+**Requirements:** `python3` (3.9+ to bootstrap; uv fetches its own 3.12), `curl`,
+`tar`, `git`. On Debian/Raspberry Pi OS the venv module is packaged separately:
+`sudo apt install python3-venv`.
 
 ## License
 

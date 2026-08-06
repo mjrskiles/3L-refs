@@ -1,0 +1,17 @@
+# One site at the apex: landing at /, reference sheets under /refs/.
+# Staging on the GitHub Pages project URL until DNS resolves — build with
+#   hugo --baseURL https://mjrskiles.github.io/3L-refs/
+# to check the subpath case. Asset URLs must survive both.
+baseURL = "https://threelakesarts.com/"
+
+# `locale` is correct as of Hugo 0.158 — it replaced `languageCode`, which is now
+# deprecated. Read by baseof.html via site.Language.Locale.
+locale = "en-US"
+title = "Three Lakes Arts"
+
+[taxonomies]
+tag = "tags"
+
+[markup.goldmark.renderer]
+# Raw HTML passthrough in Markdown — the author is trusted (plan D2).
+unsafe = true

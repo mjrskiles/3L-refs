@@ -1,0 +1,11 @@
+/* Role → token map. The ONLY place figure color is decided (brief §8).
+   Stub for P0; P1 adds stroke weights, dash patterns, and the CI contrast check.
+   Grayscale legibility must come from weight/dash, never hue. */
+.r-field{stroke:var(--rule);fill:none}
+.r-given{stroke:var(--ink);fill:none}
+.r-construction{stroke:var(--con);fill:none}
+.r-derived{stroke:var(--mars);fill:none}
+.r-subject{stroke:var(--ink);fill:none}
+.r-hidden{stroke:var(--graphite);fill:none}
+.r-ghost{stroke:var(--graphite);fill:none}
+.r-annotation{fill:var(--graphite);stroke:none}

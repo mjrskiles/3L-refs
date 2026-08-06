@@ -1,0 +1,13 @@
+{{- /* {{< fig "name" >}} or {{< fig "name" "caption text" >}} —
+     inlines layouts/_partials/figures/<ref>/<name>.svg (emitted by the generator). */ -}}
+{{- $ref := .Page.File.ContentBaseName -}}
+{{- $name := .Get 0 -}}
+{{- $p := printf "figures/%s/%s.svg" $ref $name -}}
+{{- if templates.Exists (printf "_partials/%s" $p) -}}
+<figure class="fig">
+{{ partial $p . }}
+{{- with .Get 1 }}<figcaption>{{ . | markdownify }}</figcaption>{{ end }}
+</figure>
+{{- else -}}
+{{- errorf "fig: missing figure partial %q (page %s)" $p .Page.File.Path -}}
+{{- end -}}

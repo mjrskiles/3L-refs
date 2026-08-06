@@ -1,0 +1,15 @@
+{{ define "main" }}
+<article class="ref">
+  <header class="ref-head">
+    <h1>{{ .Title }}</h1>
+    <div class="ref-meta">
+      {{- $status := .Params.status | default "draft" -}}
+      <span class="chip chip-{{ $status }}">{{ $status | upper }}</span>
+      {{- range .GetTerms "tags" }}
+      <a class="tag" href="{{ .RelPermalink }}">{{ partial "tag-name.html" . }}</a>
+      {{- end }}
+    </div>
+  </header>
+  {{ .Content }}
+</article>
+{{ end }}

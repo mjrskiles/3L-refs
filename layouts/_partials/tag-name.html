@@ -1,0 +1,6 @@
+{{- /* Display name for a tag term page: registry name wins over Hugo's titleizing. */ -}}
+{{- $slug := "" -}}
+{{- with .Data.Term }}{{ $slug = . }}{{ end -}}
+{{- $name := "" -}}
+{{- with index hugo.Data.tags $slug }}{{ $name = .name }}{{ end -}}
+{{- $name | default .LinkTitle -}}

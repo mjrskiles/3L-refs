@@ -1,0 +1,82 @@
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+# Cancel superseded runs on the same ref — a queue of stale deploys helps nobody.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Sync Python env
+        working-directory: figures
+        run: uv sync --locked
+
+      - name: Tests
+        working-directory: figures
+        run: uv run pytest -q
+
+      # Same fetcher the dev machines use — one pin (tools/get_hugo.sh), and the
+      # Linux tarball path stays continuously exercised for the Raspberry Pi.
+      - name: Setup Hugo
+        run: tools/get_hugo.sh
+
+      # Resolves to the live Pages URL — the project subpath today, the custom
+      # domain automatically once it's set in the repo's Pages settings. Nothing
+      # here hardcodes a host, so DNS day needs no change to this file.
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: false
+        continue-on-error: true
+
+      - name: Build site
+        run: |
+          BASE="${{ steps.pages.outputs.base_url }}"
+          if [ -n "$BASE" ]; then
+            echo "building for $BASE/"
+            bin/hugo --gc --minify --cleanDestinationDir --baseURL "$BASE/"
+          else
+            echo "Pages not configured yet — falling back to hugo.toml baseURL"
+            bin/hugo --gc --minify --cleanDestinationDir
+          fi
+
+      - name: No external origins
+        working-directory: figures
+        run: uv run python ../tools/check_origins.py ../public
+
+      - name: Tags registered
+        working-directory: figures
+        run: uv run python ../tools/check_tags.py ..
+
+      - name: Upload Pages artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    # Only main deploys. Every other branch still builds and gets checked above.
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
