@@ -2,10 +2,10 @@ name: ci
 
 on:
   push:
-    branches: ["**"]
+    branches: ["main"]
   pull_request:
 
-# Cancel superseded runs on the same ref — a queue of stale deploys helps nobody.
+# Cancel superseded runs on the same ref
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
