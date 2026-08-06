@@ -59,3 +59,5 @@ make fonts    # regenerate subset fonts (rarely needed)
 ## License
 
 Content: All rights reserved. Code/config: MIT.
+
+(C) Michael Skiles 2026
