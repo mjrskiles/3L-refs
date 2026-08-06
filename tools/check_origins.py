@@ -12,7 +12,7 @@ import re
 import sys
 from pathlib import Path
 
-ALLOWED_DEFAULT = {"threelakesmusic.com", "www.threelakesmusic.com", "mjrskiles.github.io"}
+ALLOWED_DEFAULT = {"threelakesarts.com", "www.threelakesarts.com", "mjrskiles.github.io"}
 
 # (?:https?:)?// also catches protocol-relative URLs — //fonts.googleapis.com/... is
 # every bit as much a third-party fetch as the https:// form.

@@ -10,7 +10,7 @@ and the handoff conflict, this plan wins.
 macOS and Raspberry Pi 5 / arm64 Linux (D14).
 
 **Rev 1.2 changes (2026-08-02):** the site is **one site at the apex**,
-`threelakesmusic.com`, with refs under `/refs/` — supersedes D4's flat namespace and
+`threelakesarts.com`, with refs under `/refs/` — supersedes D4's flat namespace and
 D9's `refs.` subdomain (see D15) · `.music` dropped as a restricted TLD · a **wiki
 layer** is adopted as a second content type alongside refs (D16) · near-term priority
 is a **landing page**, ahead of any ref (§4 P0.5).
@@ -53,7 +53,7 @@ import boundary enforced by a failing build.
   metadata + thumbnail from the same bundle; mix-and-match composition on listing
   pages later. No authoring change when that arrives.
 - **D4. No hierarchy in URLs.** ~~Refs live at `refs.threelakes.music/<slug>/`.~~
-  **Superseded by D15** — refs live at `threelakesmusic.com/refs/<slug>/`. The
+  **Superseded by D15** — refs live at `threelakesarts.com/refs/<slug>/`. The
   principle survives inside that namespace: subject areas, document kinds, and themes
   are **tags**, not path segments, and document identity (PSP-001 etc.) lives in
   frontmatter, never the URL. `/refs/` is a content-type boundary, not a taxonomy.
@@ -77,9 +77,9 @@ import boundary enforced by a failing build.
 - **D9. Repo and domain.** This checkout is the project, renamed **`3L-refs`** and
   pushed to `git@github.com:mjrskiles/3L-refs.git` (personal account while the Three
   Lakes org is sorted; the remote can move later without touching the tree). Site URL
-  is `https://threelakesmusic.com/` per D15. The repo name still says "refs" and is
+  is `https://threelakesarts.com/` per D15. The repo name still says "refs" and is
   now narrower than the site; renaming it is cosmetic and deferred.
-- **D15. One site at the apex.** `threelakesmusic.com` serves everything: the landing
+- **D15. One site at the apex.** `threelakesarts.com` serves everything: the landing
   page at `/`, reference sheets at `/refs/<slug>/`, wiki concept nodes at `/c/<slug>/`
   (D16), tag pages at `/tags/<slug>/`. Not a `refs.` subdomain — the site is an
   umbrella (who I am, Sound Byte Labs, instruments, reference material), and splitting
@@ -144,7 +144,7 @@ import boundary enforced by a failing build.
 
 ```
 3L-refs/
-├── hugo.toml                 # baseURL threelakesmusic.com; taxonomies: tags
+├── hugo.toml                 # baseURL threelakesarts.com; taxonomies: tags
 ├── content/
 │   ├── _index.md             # landing page (D15)
 │   ├── refs/
@@ -212,7 +212,7 @@ and none of it depends on the figure pipeline.
 - [x] P0 defect fixes (relative font `url()`, `--cleanDestinationDir`, `lang` from
       config, protocol-relative origins, `status: draft` ⇒ `draft: true` enforced)
 - [x] Pages deploy job on `main`, `baseURL` derived from `configure-pages`
-- [ ] **DNS** — apex records for `threelakesmusic.com`, then set the custom domain in
+- [ ] **DNS** — apex records for `threelakesarts.com`, then set the custom domain in
       repo Pages settings. Not code; the long pole. Cert issuance can take 24h.
 
 **Ends when:** the landing page is live, first on the `.io` URL, then on the domain.

@@ -4,7 +4,7 @@ UV_ENV := UV_CACHE_DIR=$(CURDIR)/.uv/cache UV_PYTHON_INSTALL_DIR=$(CURDIR)/.uv/p
 UV     := $(UV_ENV) $(CURDIR)/.venv/bin/uv
 HUGO   := $(CURDIR)/bin/hugo
 
-.PHONY: setup test build serve check fonts fonts-force
+.PHONY: setup test build serve serve-lan check fonts fonts-force
 
 setup: ## bootstrap the whole toolchain (idempotent; macOS + Linux/RPi)
 	@python3 -c 'import venv' 2>/dev/null || \
@@ -21,8 +21,17 @@ test:
 build:
 	$(HUGO) --gc --minify --cleanDestinationDir
 
+LAN_IP := $(shell hostname -I 2>/dev/null | awk '{print $$1}')
+
 serve:
 	$(HUGO) server -D
+
+# hugo server binds to 127.0.0.1, which is unreachable from another machine when
+# the Pi is headless. Binds all interfaces and sets baseURL so live-reload's
+# websocket resolves. LAN-only — do not expose this beyond the local network.
+serve-lan:
+	@echo "serving on http://$(LAN_IP):1313/  (drafts visible)"
+	$(HUGO) server -D --bind 0.0.0.0 --baseURL http://$(LAN_IP):1313/
 
 check: build test
 	cd figures && $(UV) run python ../tools/check_origins.py ../public

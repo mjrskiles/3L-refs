@@ -2,12 +2,12 @@
 # Staging on the GitHub Pages project URL until DNS resolves — build with
 #   hugo --baseURL https://mjrskiles.github.io/3L-refs/
 # to check the subpath case. Asset URLs must survive both.
-baseURL = "https://threelakesmusic.com/"
+baseURL = "https://threelakesarts.com/"
 
 # `locale` is correct as of Hugo 0.158 — it replaced `languageCode`, which is now
 # deprecated. Read by baseof.html via site.Language.Locale.
 locale = "en-US"
-title = "Three Lakes Music"
+title = "Three Lakes Arts"
 
 [taxonomies]
 tag = "tags"

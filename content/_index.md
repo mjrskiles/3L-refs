@@ -1,19 +1,19 @@
 ---
-title: Three Lakes Music
+title: Three Lakes Arts
 ---
 
 <!-- DRAFT COPY — Michael, rewrite this in your own voice. Facts I was unsure of
      are marked TODO; I've left them blank rather than invent them. -->
 
-Three Lakes Music is where I build instruments, write the firmware that runs them,
-and publish the reference material that falls out of doing both.
+Three Lakes Arts is where I build instruments, write the firmware that runs them,
+draw, and publish the reference material that falls out of all three.
 
 I'm a senior software engineer working in embedded systems. Before that I studied
 German, then music, and spent a stretch as a PLC programmer doing factory
 automation — less unrelated than it sounds, since all three are about systems that
 have to work in the real world, on time, every time. I play guitar, piano, and
-modular synths, and I've been building Eurorack modules long enough to have
-opinions about the firmware underneath them.
+modular synths, I draw, and I've been building Eurorack modules long enough to
+have opinions about the firmware underneath them.
 
 <!-- TODO: where does the name "Three Lakes" come from? Worth one sentence — it's
      the first thing anyone will ask you about. -->
@@ -55,4 +55,4 @@ drawn by hand.
 ## Contact
 
 <!-- TODO: which address? A personal gmail on a public page will attract
-     scrapers — consider hello@threelakesmusic.com forwarding to your inbox. -->
+     scrapers — consider hello@threelakesarts.com forwarding to your inbox. -->

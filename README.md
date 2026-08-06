@@ -1,7 +1,7 @@
 # 3L-refs
 
-The **Three Lakes Music** site — landing page, reference sheets, and (later) a wiki
-layer. Served at **https://threelakesmusic.com** once DNS lands; until then at the
+The **Three Lakes Arts** site — landing page, reference sheets, and (later) a wiki
+layer. Served at **https://threelakesarts.com** once DNS lands; until then at the
 GitHub Pages project URL.
 
 Built with [Hugo](https://gohugo.io/), light "engineering-paper" theme, self-hosted
