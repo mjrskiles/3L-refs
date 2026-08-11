@@ -1,0 +1,6 @@
+# Pinned 3L design system revision. Regenerate the vendored copy with
+#   make design
+# CI re-runs it and fails on drift, so this file and assets/css/ds/ agree.
+repo: https://github.com/mjrskiles/3L-design.git
+commit: 49ab34e5698e016b4e8d90889940c05f47cc2248
+subject: 'Initial design system: tokens, roles, type, fonts, foundation cards'

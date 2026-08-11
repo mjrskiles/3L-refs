@@ -1,0 +1,20 @@
+/* VENDORED from 3L-design @ 49ab34e — do not edit. Run `make design`. */
+/* Self-hosted faces — Direction B (decision 11). All OFL. No external origins
+   (CI-greppable, same doctrine as SBL). Latin subsets for now; extend subsets
+   and add weights/italics deliberately — every file is bytes. */
+@font-face { font-family:'Lora'; font-weight:600; font-style:normal;
+  src:url('../fonts/lora-600.woff2') format('woff2'); font-display:swap; }
+@font-face { font-family:'Lora'; font-weight:400; font-style:normal;
+  src:url('../fonts/lora-400.woff2') format('woff2'); font-display:swap; }
+@font-face { font-family:'Literata'; font-weight:400; font-style:normal;
+  src:url('../fonts/literata-400.woff2') format('woff2'); font-display:swap; }
+@font-face { font-family:'Literata'; font-weight:400; font-style:italic;
+  src:url('../fonts/literata-italic-400.woff2') format('woff2'); font-display:swap; }
+@font-face { font-family:'Literata'; font-weight:700; font-style:normal;
+  src:url('../fonts/literata-700.woff2') format('woff2'); font-display:swap; }
+@font-face { font-family:'IBM Plex Mono'; font-weight:400; font-style:normal;
+  src:url('../fonts/plex-mono-400.woff2') format('woff2'); font-display:swap; }
+@font-face { font-family:'IBM Plex Sans'; font-weight:400; font-style:normal;
+  src:url('../fonts/plex-sans-400.woff2') format('woff2'); font-display:swap; }
+@font-face { font-family:'IBM Plex Sans'; font-weight:600; font-style:normal;
+  src:url('../fonts/plex-sans-600.woff2') format('woff2'); font-display:swap; }

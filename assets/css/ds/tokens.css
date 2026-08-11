@@ -1,0 +1,23 @@
+/* VENDORED from 3L-design @ 49ab34e — do not edit. Run `make design`. */
+/* Three Lakes design tokens — THE single source of color.
+   The nine voices + two tools of the Cretacolor hard pastel working set
+   (locked 2026-08-06). Hexes are provisional: sampled from retailer swatch
+   photography, to be corrected against the physical sticks. Correct them
+   HERE and nowhere else — every other color in the system derives from
+   these via color-mix() in roles.css. No other file may state a hex. */
+:root {
+  /* voices */
+  --stick-ivory: #FCF2C5;       /* Ivory 201 — star yellow, light surface */
+  --stick-turquoise: #49B7A0;   /* Turquoise Dark 176 — the river */
+  --stick-leaf: #139B5A;        /* Leaf Green — summer canopy */
+  --stick-green-earth: #447965; /* Green Earth Dark 190 — forest shadow */
+  --stick-violet: #9679B4;      /* Bluish Purple — dogwood, dusk clouds */
+  --stick-cardinal: #B0292A;    /* Permanent Red Dark 115 — the cardinal */
+  --stick-rust: #A4523E;        /* English Red 209 — Ozark rust */
+  --stick-paynes: #434060;      /* Paynes Gray 239 — night sky */
+  --stick-umber: #3F3635;       /* Umber 221 — bark, earth */
+
+  /* tools — blending neutrals, never brand voices */
+  --stick-cloud: #BFC7CD;       /* Cloud Gray 232 — desaturate / lift */
+  --stick-elephant: #8A8A86;    /* Elephant Gray — PLACEHOLDER, hand-sample */
+}

@@ -1,0 +1,38 @@
+/* VENDORED from 3L-design @ 49ab34e — do not edit. Run `make design`. */
+/* Type roles — the only place typefaces are decided (mirror of roles.css for
+   color). Faces locked as Direction B; scale/weights/italics still open.
+   --f-disp:  Lora          — display + section headings. Warm brushed curves,
+              calligraphic energy with its feet on the ground.
+   --f-body:  Literata      — long-form prose.
+   --f-mono:  IBM Plex Mono — code, annotations, technical labels. The kinship
+              thread to SBL/DSP division; constant across the umbrella.
+   --f-label: IBM Plex Sans — small UI labels, captions, tags. */
+:root {
+  --f-disp: 'Lora', Georgia, serif;
+  --f-body: 'Literata', Georgia, serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --f-label: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Scale (decision 15): base anchored at 16px; steps fully fluid — the ratio
+   itself relaxes from 1.25 (major third) on desktop to ~1.2 on phones, so
+   display type compresses gracefully. Clamps interpolate 360px → 1100px vw. */
+:root {
+  --step--1: 0.8rem;                                    /* captions, labels  */
+  --step-0: 1rem;                                       /* body — 16px anchor */
+  --step-1: clamp(1.2rem,   1.176rem + 0.11vw, 1.25rem);   /* h3 */
+  --step-2: clamp(1.44rem,  1.381rem + 0.27vw, 1.5625rem); /* h2 */
+  --step-3: clamp(1.728rem, 1.619rem + 0.49vw, 1.953rem);  /* h1 */
+  --leading-body: 1.65;
+  --leading-disp: 1.2;
+  --measure: 66ch;                                      /* prose max width */
+}
+
+/* Base assignments. */
+body { font-family: var(--f-body); font-size: var(--step-0); line-height: var(--leading-body); }
+h1, h2, h3 { font-family: var(--f-disp); font-weight: 600; line-height: var(--leading-disp); }
+h1 { font-size: var(--step-3); }
+h2 { font-size: var(--step-2); }
+h3 { font-size: var(--step-1); }
+small, .label { font-family: var(--f-label); font-size: var(--step--1); }
+code, pre, kbd, samp { font-family: var(--f-mono); font-size: 0.82em; }

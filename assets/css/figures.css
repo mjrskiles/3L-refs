@@ -1,0 +1,27 @@
+/* Figure semantic roles — PROVISIONAL BRIDGE.
+
+   Renamed from roles.css to avoid colliding with the design system's roles.css,
+   which maps *site* color roles. These are the drawing roles the L3 SVG renderer
+   emits (brief §4/L2): the renderer knows only `class="r-construction"` and the
+   stylesheet decides what that means.
+
+   The real figure-role map is Pending upstream in 3L-design ("Figure-role map
+   … after site roles settle"). Assigning brand colors here would be making that
+   decision by accident, so this deliberately does NOT: every role resolves to a
+   neutral ink/rule var. Monochrome, therefore grayscale-legible by construction,
+   which is the brief §8 requirement anyway — color is supposed to be redundant.
+
+   Nothing regresses in the meantime: no figures ship yet (the armature ref is
+   draft: true and there is no layouts/_partials/figures/ directory).
+
+   When the upstream map lands, replace these values and add the stroke weights
+   and dash patterns brief §8 requires — right now .r-given and .r-subject are
+   identical, as are .r-hidden and .r-ghost. */
+.r-field{stroke:var(--rule);fill:none}
+.r-given{stroke:var(--ink);fill:none}
+.r-construction{stroke:var(--ink-muted);fill:none}
+.r-derived{stroke:var(--ink);fill:none}
+.r-subject{stroke:var(--ink);fill:none}
+.r-hidden{stroke:var(--ink-muted);fill:none}
+.r-ghost{stroke:var(--rule);fill:none}
+.r-annotation{fill:var(--ink-muted);stroke:none}

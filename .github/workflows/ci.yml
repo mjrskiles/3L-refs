@@ -63,6 +63,22 @@ jobs:
         working-directory: figures
         run: uv run python ../tools/check_tags.py ..
 
+      - name: No literal color outside ds/tokens.css
+        working-directory: figures
+        run: uv run python ../tools/check_hexes.py ..
+
+      - name: Contrast floors
+        working-directory: figures
+        run: uv run python ../tools/check_contrast.py ..
+
+      # Re-vendor from the pinned 3L-design commit and prove the committed copy
+      # matches. Clones upstream since only this repo is checked out here.
+      - name: Design system drift
+        working-directory: figures
+        run: |
+          uv run python ../tools/sync_design.py
+          cd .. && git diff --exit-code -- assets/css/ds static/fonts data/design-system.yaml
+
       - name: Upload Pages artifact
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3

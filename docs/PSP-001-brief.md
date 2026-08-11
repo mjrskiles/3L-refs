@@ -11,7 +11,10 @@
 ## 0. Read before starting
 
 1. `perspective-datasheet.html` — the current artifact.
-2. Its `:root` block — **that is the palette.** The site is greenfield and all-light, so there is no existing theme to pull tokens from and nothing to reconcile against. Lift the light token set from the artifact (`--paper`, `--plate`, `--ink`, `--graphite`, `--mars`, `--con`, …) and map it to the L2 roles in §4. You are the source of truth for it. Do not invent new hues.
+2. ~~Its `:root` block — **that is the palette.**~~ **SUPERSEDED by plan D17** — the
+   palette now comes from the 3L design system (`github.com/mjrskiles/3L-design`),
+   vendored into `assets/css/ds/`. "Do not invent new hues" still holds; the set of
+   legitimate hues just moved. Original text: Its `:root` block — that is the palette. The site is greenfield and all-light, so there is no existing theme to pull tokens from and nothing to reconcile against. Lift the light token set from the artifact (`--paper`, `--plate`, `--ink`, `--graphite`, `--mars`, `--con`, …) and map it to the L2 roles in §4. You are the source of truth for it. Do not invent new hues.
 3. §11 of the artifact — the caveats section already flags what's uncertain.
 
 ---
@@ -273,7 +276,7 @@ Concreteness stays. Performance goes.
 
 ## 8. Theming — constraints, not colors
 
-Take the light tokens from the artifact's `:root` block (§0.2). Map them to L2 roles. **The role → token map is the only place color appears.**
+~~Take the light tokens from the artifact's `:root` block (§0.2).~~ **SUPERSEDED by plan D17** — tokens come from the vendored 3L design system (`assets/css/ds/tokens.css`), and its floors (prose ≥4.5:1, large ≥3:1) govern instead of the AAA numbers below. Map them to L2 roles. **The role → token map is the only place color appears** — now CI-enforced by `tools/check_hexes.py`. The grayscale test below is unchanged and is what made this swap cheap.
 
 ### Hard floors
 

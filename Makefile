@@ -4,7 +4,7 @@ UV_ENV := UV_CACHE_DIR=$(CURDIR)/.uv/cache UV_PYTHON_INSTALL_DIR=$(CURDIR)/.uv/p
 UV     := $(UV_ENV) $(CURDIR)/.venv/bin/uv
 HUGO   := $(CURDIR)/bin/hugo
 
-.PHONY: setup test build serve serve-lan check fonts fonts-force
+.PHONY: setup test build serve serve-lan check design design-check
 
 setup: ## bootstrap the whole toolchain (idempotent; macOS + Linux/RPi)
 	@python3 -c 'import venv' 2>/dev/null || \
@@ -36,11 +36,17 @@ serve-lan:
 check: build test
 	cd figures && $(UV) run python ../tools/check_origins.py ../public
 	cd figures && $(UV) run python ../tools/check_tags.py ..
+	cd figures && $(UV) run python ../tools/check_hexes.py ..
+	cd figures && $(UV) run python ../tools/check_contrast.py ..
 
-fonts: ## regenerate subset fonts into static/fonts/ (rarely needed)
-	cd figures && $(UV) run python ../tools/subset_fonts.py $(FONT_ARGS)
+# Re-vendor the design system at the pinned commit (data/design-system.yaml).
+# Fonts are no longer subset here — that happens upstream in 3L-design.
+design: ## re-vendor CSS + fonts from 3L-design
+	cd figures && $(UV) run python ../tools/sync_design.py $(DESIGN_ARGS)
 
-# Changing UNICODES or LAYOUT_FEATURES does not invalidate the presence check in
-# subset_fonts.py — use this after editing either, or nothing regenerates.
-fonts-force: FONT_ARGS=--force
-fonts-force: fonts
+# Drift check: re-vendoring must produce no diff, or the committed copy has been
+# hand-edited or the pin moved. Same doctrine as the figure drift check.
+design-check: design
+	@git diff --exit-code -- assets/css/ds static/fonts data/design-system.yaml \
+	  || { echo "DRIFT: vendored design system differs from the pinned commit"; exit 1; }
+	@echo "design-check: OK — vendored copy matches the pin"

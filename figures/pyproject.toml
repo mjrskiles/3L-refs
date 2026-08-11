@@ -6,11 +6,12 @@ requires-python = ">=3.12"
 dependencies = []
 
 [dependency-groups]
+# fonttools dropped with tools/subset_fonts.py — font subsetting now happens
+# upstream in 3L-design, and nothing here reads a font binary.
 dev = [
   "pytest>=8.3,<9",
   "hypothesis>=6.115,<7",
   "pyyaml>=6,<7",
-  "fonttools[woff]>=4.55,<5",
 ]
 
 [tool.uv]

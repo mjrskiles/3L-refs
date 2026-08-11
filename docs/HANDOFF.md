@@ -37,7 +37,14 @@ The blog stays where it is (its own repo, `blog.soundbytelabs.net`, dark theme);
 These were decided during the evaluation. They override anything in the brief that
 conflicts.
 
-1. **All light.** The site is built on the datasheet's light "engineering-paper"
+1. ~~**All light.**~~ **SUPERSEDED by plan D17 (2026-08-09).** The 3L design system is
+   now the visual foundation: its own palette, Lora/Literata/IBM Plex type, and *both*
+   themes bridged to `prefers-color-scheme`. This was scaffolding — it existed because
+   no brand did. What survives it: no external origins, self-hosted fonts, §8's
+   contrast floors (now the design system's AA numbers), and the grayscale test.
+   Original text follows for the record.
+
+   The site is built on the datasheet's light "engineering-paper"
    palette from the start. There is no dark theme to reconcile — `sbl-refs` is
    greenfield. The light tokens are already in `source/perspective-datasheet.html`
    (`:root` block: `--paper:#EAEBE6`, `--plate:#F4F5F1`, `--ink:#14171A`,

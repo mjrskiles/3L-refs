@@ -1,0 +1,46 @@
+/* VENDORED from 3L-design @ 49ab34e — do not edit. Run `make design`. */
+/* Role → token map. The ONLY place site color is decided.
+   Every value is a stick token or a color-mix() derivation of stick tokens —
+   correcting tokens.css re-derives everything here automatically.
+   Contrast floors (to be CI-enforced): prose >= 4.5:1 against its ground,
+   headings/large >= 3:1. Ratios noted below are from provisional hexes.
+
+   Light theme: day at the farm — starlight ground, twilight ink.
+   Dark theme: clear night — Paynes sky, warm accents asleep, the river awake. */
+
+:root,
+.theme-light {
+  /* Ground is a derivation, not the raw stick: full Ivory read "a bit extra"
+     (decision 10). Ivory keeps its other jobs — star yellow, dark-theme ink,
+     highlights. Raised/soft roles chain off --surface so they track it. */
+  --surface: color-mix(in oklab, var(--stick-ivory) 35%, white);
+  --surface-raised: color-mix(in oklab, var(--surface) 55%, white);
+  --ink: var(--stick-paynes);                                            /* >= 8.71:1 AAA */
+  --ink-muted: color-mix(in oklab, var(--stick-paynes) 78%, var(--surface)); /* ~5:1 */
+  /* Headings derive from LEAF in both themes (decision 14): here toned with
+     green-earth to hold contrast on the light ground; at night toned with cloud. */
+  --heading: color-mix(in oklab, var(--stick-leaf) 60%, var(--stick-green-earth)); /* ~4:1, large type */
+  --link: var(--stick-rust);                                             /* >= 4.84:1 workhorse */
+  --accent-reserved: var(--stick-cardinal);   /* meaningful moments ONLY — scarcity is the point */
+  --rule: var(--stick-cloud);
+  --rule-soft: color-mix(in oklab, var(--stick-cloud) 50%, var(--surface));
+  --focus: var(--stick-turquoise);
+  --selection: color-mix(in oklab, var(--stick-violet) 30%, transparent);
+}
+
+.theme-dark {
+  --surface: var(--stick-paynes);
+  --surface-raised: color-mix(in oklab, var(--stick-paynes) 88%, var(--stick-ivory));
+  --ink: var(--stick-ivory);                                             /* 8.71:1 AAA */
+  --ink-muted: color-mix(in oklab, var(--stick-ivory) 72%, var(--stick-paynes));
+  /* Derived lifts (approved 2026-08-07): raw sticks fall below floor on Paynes,
+     so accents lift toward Ivory. Night headings derive from LEAF green, not
+     green-earth — the lifted earth read too muted next to the light theme. */
+  --heading: color-mix(in oklab, var(--stick-leaf) 72%, var(--stick-cloud)); /* ~3.3:1 large; Cloud = the desat tool */
+  --link: color-mix(in oklab, var(--stick-turquoise) 82%, var(--stick-ivory));      /* ~4.7:1 */
+  --accent-reserved: var(--stick-cardinal);   /* graphic weight only at night — cardinals sleep */
+  --rule: color-mix(in oklab, var(--stick-ivory) 25%, var(--stick-paynes));
+  --rule-soft: color-mix(in oklab, var(--stick-ivory) 12%, var(--stick-paynes));
+  --focus: var(--stick-turquoise);
+  --selection: color-mix(in oklab, var(--stick-violet) 40%, transparent);
+}

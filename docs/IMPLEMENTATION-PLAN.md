@@ -15,6 +15,12 @@ D9's `refs.` subdomain (see D15) · `.music` dropped as a restricted TLD · a **
 layer** is adopted as a second content type alongside refs (D16) · near-term priority
 is a **landing page**, ahead of any ref (§4 P0.5).
 
+**Rev 1.3 changes (2026-08-09):** the **3L design system is adopted** as the site's
+visual foundation, superseding the datasheet-derived palette and IBM Plex (D17) ·
+it is **vendored at a pinned commit** and drift-checked (D18) · **both themes ship**
+via `prefers-color-scheme` · the long-promised **contrast check exists** and the
+DECISIONS #9 no-literal-color rule is now CI-enforced downstream.
+
 ---
 
 ## 1. What changed since the handoff
@@ -108,6 +114,42 @@ import boundary enforced by a failing build.
     structurally a concept node. Nodes grow out of the registry rather than replacing
     it, so nothing built in P0 is thrown away.
 
+- **D17. The 3L design system is the visual foundation.** Supersedes the handoff's
+  decision 1 (all-light, palette lifted from the datasheet `:root`) and the brief's
+  §0.2 / §8 palette-source instructions. Those were scaffolding: they existed because
+  no brand did. The system at `github.com/mjrskiles/3L-design` derives from Michael's
+  physical Cretacolor working set and carries its own decision log.
+  - **Superseded:** the datasheet palette (`--paper`, `--mars`, `--con`…), IBM Plex as
+    the typeface, and "there is no dark theme to reconcile."
+  - **Still in force:** no external runtime origins · self-hosted fonts · figure roles
+    carry semantics, never colour · the grayscale test — which the brief adopted
+    precisely so a palette swap would be cheap, and it was.
+  - **Contrast floors are now the design system's (AA):** prose ≥4.5:1, large/headings
+    ≥3:1. The brief's 7:1 AAA body floor is satisfied anyway (`--ink` measures 9.42:1
+    light, 8.71:1 dark) but no longer governs muted or heading text.
+  - **Both themes ship**, bridged to `prefers-color-scheme`. Upstream scopes themes to
+    `.theme-light` / `.theme-dark` classes so both can render on one page; the bridge
+    is derived, not hand-written (D18).
+  - **Figure roles are deliberately unassigned.** The upstream figure-role map is
+    Pending; `assets/css/figures.css` resolves all eight roles to neutral ink/rule vars
+    so no brand colour is chosen by accident. Monochrome is grayscale-legible by
+    construction, which §8 wanted regardless.
+
+- **D18. The design system is vendored at a pinned commit, not submoduled.**
+  `tools/sync_design.py` copies `css/` and `fonts/` from a recorded SHA
+  (`data/design-system.yaml`) into `assets/css/ds/` and `static/fonts/`; CI re-runs it
+  and fails on any diff. Same "commit the artifact, drift-check it" doctrine as the
+  figure pipeline, and it keeps clone/CI free of submodule ceremony.
+  - The sync also **derives** `assets/css/ds/theme-auto.css` from the upstream
+    `.theme-dark` block. Hand-copying those declarations would duplicate colour
+    decisions outside `roles.css` (DECISIONS #9) and go stale the moment a provisional
+    hex is corrected (DECISIONS #4).
+  - **Site CSS consumes role vars, never `--stick-*`.** Upstream marks token
+    identifiers provisional and expects to rename them; this confines the blast radius
+    to `ds/roles.css`.
+  - Font subsetting moved upstream. `tools/subset_fonts.py` and the `fonts` /
+    `fonts-force` targets are deleted, along with the `fonttools` dependency.
+
 - **D14. Cross-platform development.** The same checkout must work on macOS and on
   a Raspberry Pi 5 (arm64 Linux). Toolchain fetchers detect OS/arch; nothing is
   installed system-wide (`tools/get_hugo.sh` handles darwin-universal `.pkg` and
@@ -154,7 +196,8 @@ import boundary enforced by a failing build.
 ├── data/
 │   ├── tags.yaml             # tag registry (D5)
 │   └── computed/             # per-ref computed.json emitted by generator
-├── assets/css/               # tokens.css (from datasheet :root) + roles.css (role→token map)
+├── assets/css/               # ds/ (vendored 3L-design: tokens, roles, theme-auto,
+│                             #   fonts, type) + base.css, site.css, figures.css
 ├── static/
 │   ├── fonts/                # subset IBM Plex (build-scripted, not manual)
 │   └── print/                # generated print PDFs (committed, drift-checked)
@@ -168,7 +211,7 @@ import boundary enforced by a failing build.
 │   ├── workbench/            # dev-only workbench page emitter
 │   ├── generate.py           # + --watch
 │   └── tests/
-├── tools/                    # toolchain fetchers (get_hugo.sh, subset_fonts.py) +
+├── tools/                    # toolchain fetchers (get_hugo.sh), sync_design.py +
 │                             #   CI checks: no-external-origins, tag-registry,
 │                             #   import-boundary, contrast, drift
 ├── docs/                     # handoff, brief, this plan; misc/ (original spiral tool)
@@ -225,7 +268,8 @@ and none of it depends on the figure pipeline.
 - [ ] Scene frame modes `fit`/`fixed`; scale in px-per-inch; roles per the brief
 - [ ] L3 web renderer: scene → SVG, one class per role, `aria-label`, no color knowledge
 - [ ] `tools/check_imports.py`: scene/render import nothing from kernel/constants — failing build
-- [ ] Contrast check over `roles.css` (WCAG luminance, ~20 lines)
+- [x] Contrast check over the role map — `tools/check_contrast.py`, resolves `var()`
+      and `color-mix(in oklab …)` and asserts AA floors per theme (delivered in D17)
 - [ ] Workbench emitter (D11): per-figure dev pages incl. grayscale + role isolation
       + inspect attributes; excluded from production build
 - [ ] `generate.py --watch` + workbench auto-refresh (D12)

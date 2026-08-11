@@ -1,113 +1,144 @@
-/* Site chrome. Colors and fonts come from tokens.css only. */
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{
-  margin:0;background:var(--paper);color:var(--ink);
-  font-family:var(--f-body);font-size:15px;line-height:1.62;
+/* Site chrome.
+
+   Consumes ROLE vars (--surface, --ink, --link, --rule…) and TYPE vars
+   (--f-disp, --step-N…), never --stick-* directly: upstream marks token
+   identifiers as provisional, so a rename should only touch ds/roles.css.
+   No literal color anywhere — enforced by tools/check_hexes.py.
+
+   Structure is unchanged from the datasheet-era layout; only the skin moved.
+   One necessary typographic change: display type is now Lora, a warm serif, so
+   headings dropped the uppercase + negative-tracking treatment that suited the
+   old condensed sans. Uppercase survives only on small mono/label elements —
+   chips, tags, eyebrows — which is what --f-label exists for. */
+
+/* Micro-label sizes derive from the scale rather than inventing px. */
+:root{
+  --step-micro:calc(var(--step--1) * .78);
+  --step-mini:calc(var(--step--1) * .88);
+  --shell:1180px;
 }
-/* No `font-feature-settings:"tnum"` — IBM Plex ships no tnum feature because its
-   figures are tabular by default (all digits 600 units). The declaration the
-   datasheet carried was inert; columns already align without it. */
-a{color:var(--mars)}
-a:focus-visible{outline:2px solid var(--mars);outline-offset:2px}
+
+/* Skip link — first thing in the tab order, off-screen until focused. Without it
+   every keyboard visitor tabs the masthead again on every page. */
+.skip{
+  position:absolute;left:-9999px;top:0;z-index:10;
+  padding:10px 14px;
+  background:var(--surface-raised);color:var(--ink);
+  border:1px solid var(--rule);border-radius:2px;
+  font-family:var(--f-label);font-size:var(--step--1);text-decoration:none;
+}
+.skip:focus{left:8px;top:8px}
 
 /* masthead */
+/* The wordmark carries the h1 on the home page (see baseof.html); neutralise the
+   type scale's h1 sizing so the heading is semantic only and nothing moves. */
+.mast-title{margin:0;font:inherit;line-height:inherit}
 .masthead{
-  max-width:1180px;margin:0 auto;padding:22px;
+  max-width:var(--shell);margin:0 auto;padding:22px;
   border-bottom:2px solid var(--ink);
-  display:flex;align-items:baseline;gap:14px;
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
 }
 .mast-home{
-  font-family:var(--f-disp);font-weight:700;font-size:22px;
-  letter-spacing:-.01em;text-transform:uppercase;
+  font-family:var(--f-disp);font-weight:600;font-size:var(--step-1);
+  letter-spacing:.02em;
   color:var(--ink);text-decoration:none;
 }
 .mast-sub{
-  font-family:var(--f-mono);font-size:11px;color:var(--graphite);
+  font-family:var(--f-label);font-size:var(--step-mini);color:var(--ink-muted);
   text-transform:uppercase;letter-spacing:.09em;
 }
 
-main{max-width:1180px;margin:0 auto;padding:28px 22px 90px}
+main{max-width:var(--shell);margin:0 auto;padding:28px 22px 90px}
 
 /* landing tiles */
 .tiles{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
   gap:16px;margin-top:8px;
 }
-.tile{background:var(--plate);border:1px solid var(--rule);padding:14px}
+.tile{background:var(--surface-raised);border:1px solid var(--rule);padding:14px}
 .tile-link{text-decoration:none;color:var(--ink)}
 .tile-thumb{margin-bottom:10px}
 .tile-thumb svg{display:block;width:100%;height:auto}
 .tile-title{
-  font-family:var(--f-disp);font-weight:700;text-transform:uppercase;
-  font-size:17px;letter-spacing:.01em;margin:0 0 10px;line-height:1.15;
+  font-family:var(--f-disp);font-weight:600;font-size:var(--step-1);
+  margin:0 0 10px;line-height:var(--leading-disp);
 }
 .tile-meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
 
 /* chips + tags */
 .chip{
-  font-family:var(--f-mono);font-size:9.5px;font-weight:600;
+  font-family:var(--f-label);font-size:var(--step-micro);font-weight:600;
   text-transform:uppercase;letter-spacing:.07em;
   padding:2px 7px;border:1px solid var(--rule);border-radius:2px;
 }
-.chip-draft{color:var(--graphite);border-style:dashed}
-.chip-prelim{color:var(--con);border-color:var(--con-soft)}
-.chip-current{color:var(--plate);background:var(--ink);border-color:var(--ink)}
+.chip-draft{color:var(--ink-muted);border-style:dashed}
+/* Deliberately NOT --accent-reserved: the cardinal is reserved for meaningful
+   moments and scarcity is the point. A "prelim" badge is not one of them. */
+.chip-prelim{color:var(--ink-muted);border-color:var(--rule)}
+.chip-current{color:var(--surface);background:var(--ink);border-color:var(--ink)}
 .tag{
-  font-family:var(--f-mono);font-size:10.5px;color:var(--graphite);
+  font-family:var(--f-label);font-size:var(--step-mini);color:var(--ink-muted);
   text-decoration:none;padding:2px 7px;
-  background:var(--tint);border-radius:2px;
+  background:var(--surface-raised);border:1px solid var(--rule-soft);border-radius:2px;
 }
-.tag:hover{color:var(--mars)}
+.tag:hover{color:var(--link);border-color:var(--rule)}
 
 /* ref page */
-.ref{max-width:74ch}
+.ref{max-width:var(--measure)}
 .ref-head{border-bottom:1.5px solid var(--ink);padding-bottom:10px;margin-bottom:20px}
 .ref-head h1{
-  font-family:var(--f-disp);font-weight:700;text-transform:uppercase;
-  font-size:clamp(24px,4.5vw,40px);line-height:1;letter-spacing:-.01em;margin:0 0 10px;
+  font-family:var(--f-disp);font-weight:600;font-size:var(--step-3);
+  line-height:var(--leading-disp);margin:0 0 10px;color:var(--heading);
 }
 .ref-meta{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
 .ref p{margin:0 0 .85em}
-code{font-family:var(--f-mono);font-size:.9em;background:var(--tint);padding:1px 4px;border-radius:2px}
+.ref h2{color:var(--heading);margin:1.8em 0 .4em}
+.ref h3{color:var(--heading);margin:1.5em 0 .3em}
 
 /* figures */
-figure.fig{margin:22px 0;background:var(--plate);border:1px solid var(--rule);padding:14px 14px 0}
+figure.fig{margin:22px 0;background:var(--surface-raised);border:1px solid var(--rule);padding:14px 14px 0}
 figure.fig svg{display:block;width:100%;height:auto}
 figure.fig figcaption{
-  font-family:var(--f-mono);font-size:11px;color:var(--graphite);line-height:1.5;
+  font-family:var(--f-label);font-size:var(--step--1);color:var(--ink-muted);
+  line-height:1.5;
   border-top:1px solid var(--rule);margin-top:10px;padding:8px 0;
 }
 
 /* landing page */
-.landing{max-width:68ch}
+.landing{max-width:var(--measure)}
+/* The lede is THE FIRST PARAGRAPH of content/_index.md — see docs/CONTENT-WORKSHEET.md.
+   Adding a paragraph above the intro moves this treatment onto the wrong sentence. */
 .landing > p:first-of-type{
-  font-family:var(--f-claim);font-style:italic;
-  font-size:19px;line-height:1.5;color:var(--ink);
+  font-family:var(--f-body);font-style:italic;
+  font-size:var(--step-1);line-height:1.5;color:var(--ink);
   margin:0 0 1.4em;padding-bottom:1.1em;border-bottom:1px solid var(--rule);
 }
 .landing p{margin:0 0 .95em}
 .landing h2{
-  font-family:var(--f-disp);font-weight:700;text-transform:uppercase;
-  font-size:19px;letter-spacing:.02em;line-height:1.1;
-  margin:2.2em 0 .1em;padding-top:.55em;border-top:1.5px solid var(--ink);
+  font-family:var(--f-disp);font-weight:600;font-size:var(--step-2);
+  line-height:var(--leading-disp);color:var(--heading);
+  margin:2.2em 0 .1em;padding-top:.55em;border-top:1.5px solid var(--rule);
 }
-/* Section rule spans the text measure; the label sits under it, datasheet-style. */
 .landing h2 + p{margin-top:.75em}
-.landing strong{font-family:var(--f-mono);font-size:.82em;font-weight:600;
-  text-transform:uppercase;letter-spacing:.06em;color:var(--graphite)}
+/* `**Status:**` markers render as small labels — also a worksheet convention. */
+.landing strong{
+  font-family:var(--f-label);font-size:var(--step-mini);font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);
+}
 
 /* term/list pages */
 .list-title{
-  font-family:var(--f-disp);font-weight:700;text-transform:uppercase;
-  font-size:24px;margin:0 0 4px;
+  font-family:var(--f-disp);font-weight:600;font-size:var(--step-2);
+  line-height:var(--leading-disp);color:var(--heading);margin:0 0 4px;
 }
-.list-charter{font-family:var(--f-mono);font-size:12px;color:var(--graphite);margin:0 0 14px}
-.empty{font-family:var(--f-mono);color:var(--graphite)}
+.list-charter{font-family:var(--f-label);font-size:var(--step--1);color:var(--ink-muted);
+  margin:0 0 14px;max-width:var(--measure)}
+.term-list{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px}
+.empty{font-family:var(--f-label);color:var(--ink-muted)}
 
 /* footer */
 .colophon{
-  border-top:2px solid var(--ink);max-width:1180px;margin:0 auto;
+  border-top:2px solid var(--ink);max-width:var(--shell);margin:0 auto;
   padding:16px 22px 40px;
-  font-family:var(--f-mono);font-size:10.5px;color:var(--graphite);
+  font-family:var(--f-label);font-size:var(--step-mini);color:var(--ink-muted);
 }

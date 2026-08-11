@@ -4,20 +4,34 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
+{{- /* Order is load-bearing: tokens define the sticks, roles derive site color from
+       them, theme-auto bridges those roles to the OS preference, then type, then our
+       own layers. ds/* are vendored from 3L-design by tools/sync_design.py — edit
+       them there, not here. */ -}}
 {{- $css := slice
-      (resources.Get "css/tokens.css")
-      (resources.Get "css/fonts.css")
-      (resources.Get "css/roles.css")
+      (resources.Get "css/ds/tokens.css")
+      (resources.Get "css/ds/roles.css")
+      (resources.Get "css/ds/theme-auto.css")
+      (resources.Get "css/ds/fonts.css")
+      (resources.Get "css/ds/type.css")
+      (resources.Get "css/base.css")
       (resources.Get "css/site.css")
+      (resources.Get "css/figures.css")
     | resources.Concat "css/bundle.css" | minify | fingerprint }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}">
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 <header class="masthead">
+  {{- /* On the home page the wordmark IS the page heading, so it carries the h1;
+         the landing content then starts at h2 and the outline is correct. Every
+         other page has its own h1, so here it is a plain link. */ -}}
+  {{ if .IsHome }}<h1 class="mast-title">{{ end -}}
   <a class="mast-home" href="{{ site.Home.RelPermalink }}">THREE&nbsp;LAKES&nbsp;ARTS</a>
+  {{- if .IsHome }}</h1>{{ end }}
   <span class="mast-sub">instruments · firmware · drawing · reference</span>
 </header>
-<main>
+<main id="main">
 {{ block "main" . }}{{ end }}
 </main>
 <footer class="colophon">
