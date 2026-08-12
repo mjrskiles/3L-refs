@@ -73,9 +73,24 @@ jobs:
 
       # Re-vendor from the pinned 3L-design commit and prove the committed copy
       # matches. Clones upstream since only this repo is checked out here.
+      # 3L-design is private: the clone goes over SSH with a read-only deploy
+      # key (DESIGN_DEPLOY_KEY secret; public half lives in 3L-design's deploy
+      # keys). The pin file still records the canonical https URL.
       - name: Design system drift
         working-directory: figures
+        env:
+          DESIGN_DEPLOY_KEY: ${{ secrets.DESIGN_DEPLOY_KEY }}
+          SYNC_DESIGN_UPSTREAM: git@github.com:mjrskiles/3L-design.git
         run: |
+          if [ -z "$DESIGN_DEPLOY_KEY" ]; then
+            echo "::error::DESIGN_DEPLOY_KEY secret is not set — the drift check cannot clone the private 3L-design repo"
+            exit 1
+          fi
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$DESIGN_DEPLOY_KEY" > ~/.ssh/design_key
+          chmod 600 ~/.ssh/design_key
+          ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/design_key -o IdentitiesOnly=yes"
           uv run python ../tools/sync_design.py
           cd .. && git diff --exit-code -- assets/css/ds static/fonts data/design-system.yaml
 

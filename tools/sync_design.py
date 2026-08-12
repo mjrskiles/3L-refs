@@ -19,6 +19,7 @@ Usage:
   sync_design.py --source <path> read from a local checkout instead of cloning
 """
 import argparse
+import os
 import re
 import shutil
 import subprocess
@@ -31,7 +32,13 @@ PIN_FILE = ROOT / "data" / "design-system.yaml"
 CSS_OUT = ROOT / "assets" / "css" / "ds"
 FONT_OUT = ROOT / "static" / "fonts"
 
+# The canonical identity of the upstream — what the pin file records. The URL
+# actually *cloned* can be overridden (SYNC_DESIGN_UPSTREAM) because 3L-design
+# is private: CI reaches it over SSH with a read-only deploy key, which the
+# https form can't use. Keeping the recorded repo: line canonical means the
+# override can never show up as vendored-file drift.
 UPSTREAM = "https://github.com/mjrskiles/3L-design.git"
+CLONE_URL = os.environ.get("SYNC_DESIGN_UPSTREAM", UPSTREAM)
 DEFAULT_LOCAL = ROOT.parent / "design-system"
 
 # Copied verbatim. Order matters downstream (baseof.html bundles tokens before
@@ -77,7 +84,7 @@ def source_tree(source: str | None, ref: str, tmp: Path) -> Path:
             subprocess.run(["git", "-C", str(local), "archive", ref], check=True, stdout=fh)
         shutil.unpack_archive(str(archive), str(work), format="tar")
         return work
-    run(["git", "clone", "--quiet", UPSTREAM, str(tmp / "clone")])
+    run(["git", "clone", "--quiet", CLONE_URL, str(tmp / "clone")])
     run(["git", "-C", str(tmp / "clone"), "checkout", "--quiet", ref])
     return tmp / "clone"
 
