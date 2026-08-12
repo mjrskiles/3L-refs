@@ -106,20 +106,18 @@ figure.fig figcaption{
 
 /* landing page */
 .landing{max-width:var(--measure)}
-/* The lede is THE FIRST PARAGRAPH of content/_index.md — see docs/CONTENT-WORKSHEET.md.
-   Adding a paragraph above the intro moves this treatment onto the wrong sentence. */
-.landing > p:first-of-type{
-  font-family:var(--f-body);font-style:italic;
-  font-size:var(--step-1);line-height:1.5;color:var(--ink);
-  margin:0 0 1.4em;padding-bottom:1.1em;border-bottom:1px solid var(--rule);
-}
+/* The italic first-paragraph "lede" treatment and the rules above each h2 are
+   gone (2026-08-12, Michael): the landing copy now opens with a heading, so
+   whitespace and the heading green carry the section rhythm on their own. */
 .landing p{margin:0 0 .95em}
 .landing h2{
   font-family:var(--f-disp);font-weight:600;font-size:var(--step-2);
   line-height:var(--leading-disp);color:var(--heading);
-  margin:2.2em 0 .1em;padding-top:.55em;border-top:1.5px solid var(--rule);
+  margin:2.2em 0 .1em;
 }
 .landing h2 + p{margin-top:.75em}
+/* the copy opens with a heading; main's own padding provides the top space */
+.landing > h2:first-child{margin-top:0}
 /* `**Status:**` markers render as small labels — also a worksheet convention. */
 .landing strong{
   font-family:var(--f-label);font-size:var(--step-mini);font-weight:600;
