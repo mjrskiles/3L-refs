@@ -14,7 +14,7 @@ Three Lakes is the maker's mark under which I share creative and engineering pro
 
 ## Where's the beef?
 
-Coming as soon as I get time to get more content up!
+Please enjoy this [gracious offering](https://github.com/mjrskiles/gatekeeper) of open source Eurorack firmware and schematics while I work on getting more content up :D 
 
 ## Contact
 
