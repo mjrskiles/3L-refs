@@ -46,9 +46,13 @@ fi
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
+# --retry-all-errors: GitHub's release CDN throws transient 503s, which plain
+# --retry treats as permanent; two deploys died on exactly that (2026-08-12).
+CURL="curl -fsSL --retry 5 --retry-delay 3 --retry-all-errors"
+
 echo "fetching $ASSET ..."
-curl -fsSL -o "$TMP/$ASSET" "$BASE/$ASSET"
-curl -fsSL -o "$TMP/checksums.txt" "$BASE/hugo_${HUGO_VERSION}_checksums.txt"
+$CURL -o "$TMP/$ASSET" "$BASE/$ASSET"
+$CURL -o "$TMP/checksums.txt" "$BASE/hugo_${HUGO_VERSION}_checksums.txt"
 (cd "$TMP" && grep " $ASSET\$" checksums.txt | $SHACHECK)
 
 mkdir -p "$BIN"
