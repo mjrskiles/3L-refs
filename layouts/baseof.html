@@ -28,11 +28,11 @@
          content then starts at h2 and the outline is correct. Every other page
          has its own h1, so there the wordmark is a plain link home. */ -}}
   {{ if .IsHome -}}
-  <h1 class="mast-title"><span class="mast-home">THREE&nbsp;LAKES&nbsp;ARTS</span></h1>
+  <h1 class="mast-title"><span class="mast-home">THREE&nbsp;LAKES</span></h1>
   {{- else -}}
-  <a class="mast-home" href="{{ site.Home.RelPermalink }}">THREE&nbsp;LAKES&nbsp;ARTS</a>
+  <a class="mast-home" href="{{ site.Home.RelPermalink }}">THREE&nbsp;LAKES</a>
   {{- end }}
-  <span class="mast-sub">musical instruments · embedded audio · art · reference</span>
+  <span class="mast-sub">art · musical instruments · embedded audio · reference</span>
 </header>
 <main id="main">
 {{ block "main" . }}{{ end }}
