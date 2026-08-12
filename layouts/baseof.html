@@ -23,8 +23,8 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="masthead">
-  {{- /* On the home page the wordmark IS the page heading, so it carries the h1
-         and is not a link — a wordmark self-link is a dead click. The landing
+  {{- /* On the home page the wordmark acts as the page heading, so it carries the h1
+         and is not a link. The landing
          content then starts at h2 and the outline is correct. Every other page
          has its own h1, so there the wordmark is a plain link home. */ -}}
   {{ if .IsHome -}}
@@ -32,7 +32,7 @@
   {{- else -}}
   <a class="mast-home" href="{{ site.Home.RelPermalink }}">THREE&nbsp;LAKES&nbsp;ARTS</a>
   {{- end }}
-  <span class="mast-sub">instruments · firmware · drawing · reference</span>
+  <span class="mast-sub">musical instruments · embedded audio · art · reference</span>
 </header>
 <main id="main">
 {{ block "main" . }}{{ end }}
