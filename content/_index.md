@@ -8,7 +8,7 @@ I'm Michael, an artist and engineer. I am currently celebrating my 20th year as 
 
 A true story: a few months before Covid hit I bought my first Pocket Operator, a PO-20 Arcade. It took getting laid off and diving into audio hardware, plus a few years of blind stumbling for that to lead me into modular synthesizers but now the only thing I want to do is design and build musical instruments.
 
-[Me demoing my firmware library](IMG_0207.jpg)
+![Me demoing my firmware library](IMG_0207.jpg)
 
 ## About Three Lakes
 
