@@ -43,6 +43,13 @@
   letter-spacing:.02em;
   color:var(--ink);text-decoration:none;
 }
+/* The three-tile mark. em-sized so it rides the wordmark's type scale; the
+   raw turquoise stick is deliberate — it's the river, and the mark is
+   decorative, so text-contrast floors don't apply to it. */
+.mast-mark{
+  height:.52em;width:auto;margin-right:.5em;
+  fill:var(--stick-turquoise);
+}
 .mast-sub{
   font-family:var(--f-label);font-size:var(--step-mini);color:var(--ink-muted);
   text-transform:uppercase;letter-spacing:.09em;
